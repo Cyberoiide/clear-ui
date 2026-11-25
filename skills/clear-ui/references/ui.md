@@ -1,7 +1,8 @@
 # Part 2: UI
 
 Apply this once the structure from Part 1 is agreed. The system is black ink on white, with hairline
-borders, one filled button per screen, and colour used only to report status. Every value below is in
+borders, one filled button per screen, and colour used only to report status or to tell chart
+categories apart. Every value below is in
 `assets/tokens.css` as a CSS variable and a reference class; `assets/components.html` shows them all
 on one page, in light and dark.
 
@@ -31,7 +32,7 @@ summarised in `sources.md`, with the full teardowns in `research/ui/`.
 1. **White page, near-black ink.** Hierarchy comes from three text greys, size and weight.
 2. **One filled button per screen**, and it is ink-coloured. Everything else is outlined, soft or ghost.
 3. **Colour means status.** Green, amber, red and blue appear only to say success, warning, error
-   or information, in small amounts.
+   or information, in small amounts. The one other use is telling categories apart inside a chart.
 4. **Hairline borders for things that sit on the page; shadows only for things that float** above it.
 5. **Generous, fixed sizes.** Controls have fixed heights on a 4px grid, with radius about a third
    of their height.
@@ -76,6 +77,31 @@ dark mode.
 Use them in badges, inline validation, a 6px status dot, a positive or negative delta. Never as the
 fill of a navigation item, a card, an icon tile or a section background. A status colour always
 comes with a word or icon, since colour alone is invisible to some users.
+
+### Data colours
+
+A chart is grey by default: marks in `--data-neutral`, and the one mark the user should look at
+(today, the current period, the selected row) in `--ink`. That covers any chart with one series.
+
+When marks belong to different categories and the user has to tell them apart, such as projects on
+a timeline or stages in a funnel, use the five tints, in this order:
+
+| Token | Light | Reads as |
+|---|---|---|
+| `--data-1` | `#dbe7fe` | Blue |
+| `--data-2` | `#fde6cc` | Peach |
+| `--data-3` | `#fbd8ee` | Pink |
+| `--data-4` | `#e5dcfb` | Violet |
+| `--data-5` | `#cdf0dc` | Green |
+
+- A category keeps its tint everywhere on the screen: its interval on the timeline, its bar, and an
+  8px square (`.swatch`) before its name in the rows below. This is how a row is tied to its mark.
+- Text on a tint is `--text`. The tints are too pale to be read on their own, so every mark carries
+  its name and value in text, and adjacent marks are separated by a 2px gap.
+- More than five categories: keep the four largest and group the rest as "Other" in
+  `--data-neutral`.
+- Tints fill chart marks and swatches only. Not cards, badges, navigation, icons or buttons.
+- Do not use a status colour as a category: a red bar reads as a problem.
 
 ### Brand colour
 
@@ -278,6 +304,24 @@ the status colour on its soft background, with an optional 6px dot.
 there is one, is a small status-coloured number next to it. Use stats when the numbers are what the
 user came for, not as a default page header.
 
+**Chart.** Sits directly on the page or in a card, under a 16/500 title that names what it shows.
+Axis labels are in `--text-3` with tabular figures, at the smallest text size already on the
+screen (12 or 13px), so a chart adds no new size; the baseline is a `--border-strong`
+hairline, gridlines are `--border` and dashed, and there are at most four of them. No chart border,
+no background fill, no shadow, no gradient under a line, no 3D. Marks have 4 to 6px radius. A value
+label sits on or beside its mark at that same size. Hovering a mark shows a tooltip with the exact
+value and gives its row below the hover fill; the other marks keep their colour. Draw simple charts in HTML and CSS or inline SVG; add a chart
+library only when the chart needs zoom, many series or live data.
+
+- **Bar list** (`.bar-list`): rows of name, bar, number. Bars are 24 high and their width is the
+  share of the largest value. Use it for amounts per category and for funnel stages.
+- **Timeline** (`.timeline`): a 40 high track with intervals positioned by start and length, an
+  axis of evenly spaced labels below (`.timeline-axis`), and a 1px ink line for now. An interval too
+  narrow for its label shows it in the tooltip. On a phone the track scrolls sideways.
+- **Columns:** bars from a zero baseline, 4px radius on the top corners, at most about 31 of them,
+  the current one in ink.
+- **Line:** 1.5px in ink, no dots except on the last point and the hovered one.
+
 **Tabs.** 40 high, 14px, weight 500, 20px apart, on a hairline. The selected tab is `--text` with a
 2px ink underline.
 
@@ -383,6 +427,7 @@ reference products do them. Leave them out unless the user asks for one by name.
 - Elements that fade and slide up as the page scrolls; cards that lift on hover.
 - Everything centred, including long paragraphs.
 - Big numbers with small labels as the opening of every page.
+- A donut or pie chart; a chart with a rainbow of saturated series; a sparkline beside every number.
 - Numbered markers (01, 02, 03) on content that is not a sequence.
 - Monospace type for labels or numbers as decoration.
 - Vague copy: "Unlock the power of", "Seamless", "Supercharge", "Get started today".
@@ -393,7 +438,7 @@ reference products do them. Leave them out unless the user asks for one by name.
 Look at a screenshot of the result, at desktop and phone width, in light and dark.
 
 1. Is there exactly one filled button on the screen, and is it the thing the user most likely wants?
-2. Covering every status colour, is the screen only black, white and grey?
+2. Covering every status colour and chart mark, is the screen only black, white and grey?
 3. Do static surfaces have borders without shadows, and floating ones shadows without borders?
 4. Are there four text sizes or fewer, weights 400/500/600 only, no uppercase labels?
 5. Are all gaps on the 4px grid, and do related things sit closer than unrelated ones?
@@ -402,5 +447,7 @@ Look at a screenshot of the result, at desktop and phone width, in light and dar
 8. Does readable text pass 4.5:1, in both themes?
 9. Does it work at 390px wide with nothing clipped and targets of at least 40px?
 10. Do empty, loading and error states exist and say what to do next?
-11. Is every item in section 14 absent?
-12. Then remove one more thing.
+11. Where the data has a shape (time, amounts, stages), is it drawn, and does every mark have its
+    name and value in text?
+12. Is every item in section 14 absent?
+13. Then remove one more thing.

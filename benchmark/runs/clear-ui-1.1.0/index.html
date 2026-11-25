@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timer · Tally</title>
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+/* ---------- clear-ui tokens (from assets/tokens.css, only what this screen uses) ---------- */
+:root {
+  color-scheme: light;
+  --bg: #ffffff; --bg-subtle: #fafafa; --bg-soft: #f4f4f4; --bg-soft-hover: #ececec; --bg-raised: #ffffff;
+  --ink: #0d0d0d; --ink-hover: #303030; --ink-active: #414141; --on-ink: #ffffff;
+  --text: #0d0d0d; --text-2: #5d5d5d; --text-3: #6e6e6e; --text-placeholder: #8f8f8f;
+  --border: rgba(13, 13, 13, 0.08); --border-strong: rgba(13, 13, 13, 0.16);
+  --ring: rgba(13, 13, 13, 0.12); --focus: #0d0d0d;
+  --success: #15803d; --success-soft: #edf7f0;
+  --warning: #b45309;
+  --data-neutral: #e4e4e4;
+  --data-1: #dbe7fe; --data-2: #fde6cc; --data-3: #fbd8ee; --data-4: #e5dcfb; --data-5: #cdf0dc;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text-xs: 12px; --lh-xs: 16px;
+  --text-base: 14px; --lh-base: 20px;
+  --text-md: 16px; --lh-md: 24px;
+  --text-xl: 24px;
+  --radius-xs: 4px; --radius-sm: 6px; --radius-md: 8px; --radius-xl: 12px; --radius-2xl: 16px; --radius-full: 999px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1); --dur-fast: 100ms; --dur: 150ms;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111111; --bg-subtle: #161616; --bg-soft: #1f1f1f; --bg-soft-hover: #292929; --bg-raised: #1c1c1c;
+    --ink: #f2f2f2; --ink-hover: #d9d9d9; --ink-active: #c4c4c4; --on-ink: #0d0d0d;
+    --text: #f2f2f2; --text-2: #a3a3a3; --text-3: #8a8a8a; --text-placeholder: #6b6b6b;
+    --border: rgba(255, 255, 255, 0.09); --border-strong: rgba(255, 255, 255, 0.18);
+    --ring: rgba(255, 255, 255, 0.16); --focus: #f2f2f2;
+    --success: #4ade80; --success-soft: rgba(74, 222, 128, 0.12);
+    --warning: #fbbf24;
+    --data-neutral: #333333;
+    --data-1: #24365c; --data-2: #57391a; --data-3: #552a48; --data-4: #3a2f63; --data-5: #1f4a35;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111111; --bg-subtle: #161616; --bg-soft: #1f1f1f; --bg-soft-hover: #292929; --bg-raised: #1c1c1c;
+  --ink: #f2f2f2; --ink-hover: #d9d9d9; --ink-active: #c4c4c4; --on-ink: #0d0d0d;
+  --text: #f2f2f2; --text-2: #a3a3a3; --text-3: #8a8a8a; --text-placeholder: #6b6b6b;
+  --border: rgba(255, 255, 255, 0.09); --border-strong: rgba(255, 255, 255, 0.18);
+  --ring: rgba(255, 255, 255, 0.16); --focus: #f2f2f2;
+  --success: #4ade80; --success-soft: rgba(74, 222, 128, 0.12);
+  --warning: #fbbf24;
+  --data-neutral: #333333;
+  --data-1: #24365c; --data-2: #57391a; --data-3: #552a48; --data-4: #3a2f63; --data-5: #1f4a35;
+}
+
+/* ---------- Base and components (from tokens.css) ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 var(--text-base)/var(--lh-base) var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+h1, h2 { margin: 0; font-weight: 500; }
+p, ul { margin: 0; padding: 0; list-style: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.t-heading { font-size: var(--text-md); line-height: var(--lh-md); font-weight: 500; letter-spacing: -0.01em; }
+.t-meta { font-size: var(--text-xs); line-height: var(--lh-xs); color: var(--text-3); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: var(--radius-xl);
+  background: var(--ink); color: var(--on-ink);
+  font: 500 var(--text-base)/1 var(--font-sans); white-space: nowrap; cursor: pointer; user-select: none;
+  transition: background-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.btn:hover { background: var(--ink-hover); transition-duration: 0s, var(--dur-fast); }
+.btn:active { background: var(--ink-active); transform: scale(0.98); }
+
+.field { display: grid; gap: 6px; min-width: 0; }
+.label { font-size: var(--text-xs); line-height: var(--lh-xs); font-weight: 500; }
+.input, .select {
+  width: 100%; height: 40px; padding: 0 12px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-xl);
+  background: var(--bg-raised); color: var(--text);
+  font: 400 var(--text-base)/var(--lh-base) var(--font-sans);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.input::placeholder { color: var(--text-placeholder); }
+.input:hover, .select:hover { border-color: var(--text-3); }
+.input:focus, .select:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--ring); }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 500; white-space: nowrap; background: var(--success-soft); color: var(--success); }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.bar-list { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr) max-content; align-items: center; gap: 8px 12px; }
+.bar-list .num { text-align: right; }
+.bar-list .name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bar-list .name span:last-child, .entry .title span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar, .span, .swatch { background: var(--data-neutral); }
+.bar { height: 24px; min-width: 2px; border-radius: var(--radius-sm); }
+.timeline { position: relative; height: 40px; border-radius: var(--radius-md); background: var(--bg-subtle); box-shadow: inset 0 0 0 1px var(--border); overflow: hidden; }
+.timeline .span { position: absolute; top: 4px; bottom: 4px; padding: 0 6px; border-radius: var(--radius-xs); color: var(--text); font-size: var(--text-xs); line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 0 0 1px var(--bg-subtle); }
+.timeline .span.hl { box-shadow: 0 0 0 1px var(--bg-subtle), inset 0 0 0 1px var(--ink); }
+.timeline .now { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ink); }
+.timeline-axis { display: flex; justify-content: space-between; margin-top: 4px; color: var(--text-3); font-size: var(--text-xs); line-height: var(--lh-xs); font-variant-numeric: tabular-nums; }
+.swatch { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: 2px; box-shadow: 0 0 0 1px var(--border-strong); }
+.data-1 { background: var(--data-1); } .data-2 { background: var(--data-2); } .data-3 { background: var(--data-3); }
+.data-4 { background: var(--data-4); } .data-5 { background: var(--data-5); }
+
+/* ---------- This screen ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.timer { border-bottom: 1px solid var(--border); padding: 16px 0; background: var(--bg); }
+.timer form { display: grid; grid-template-columns: minmax(0, 1fr) 260px auto auto; gap: 12px; align-items: end; }
+.clock { min-width: 7ch; padding: 0 4px; text-align: right; font-size: var(--text-xl); line-height: 40px; font-weight: 600; letter-spacing: -0.02em; color: var(--text-3); }
+.clock.on { color: var(--text); }
+.warn { margin-top: 12px; color: var(--warning); }
+
+main.wrap { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px 64px; align-items: start; padding-top: 32px; padding-bottom: 40px; }
+.head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+.head .total { margin-left: auto; }
+.tl-scroll { overflow-x: auto; }
+.entries { margin-top: 12px; }
+.entry { display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--border); }
+.entry:last-child { border-bottom: 0; }
+.entry.hl { background: var(--bg-subtle); }
+.entry .what { flex: 1; min-width: 0; }
+.entry .title { display: flex; align-items: center; gap: 8px; }
+.entry .dur { text-align: right; white-space: nowrap; }
+.note { margin-top: 16px; color: var(--text-2); max-width: 44ch; }
+
+@media (max-width: 800px) {
+  .wrap { padding: 0 16px; }
+  main.wrap { grid-template-columns: minmax(0, 1fr); padding-top: 24px; padding-bottom: 168px; }
+  /* Small screens: the main action sits at the bottom edge, within reach of the thumb. */
+  .timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1; border-bottom: 0; border-top: 1px solid var(--border); padding: 12px 0; }
+  .timer form { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .timer .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } /* the placeholder and the selected project stand in on a phone */
+  .input, .select { height: 48px; padding: 0 16px; border-radius: var(--radius-2xl); font-size: var(--text-md); }
+  .btn { height: 48px; padding: 0 20px; border-radius: var(--radius-2xl); font-size: var(--text-md); }
+  .clock { line-height: 48px; }
+  .f-note { order: 1; } .clock { order: 2; } .f-project { order: 3; } .btn { order: 4; }
+  .tl-inner { min-width: 560px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; } }
+</style>
+</head>
+<body>
+
+<h1 class="sr-only">Timer</h1>
+
+<section class="timer" aria-label="Timer">
+  <div class="wrap">
+    <form id="form">
+      <div class="field f-note">
+        <label class="label" for="note">Note</label>
+        <input class="input" id="note" autocomplete="off" maxlength="80" placeholder="What are you doing?">
+      </div>
+      <div class="field f-project">
+        <label class="label" for="project">Project</label>
+        <select class="select" id="project"></select>
+      </div>
+      <div class="clock num" id="clock" role="timer" aria-label="Running time">0:00:00</div>
+      <button class="btn" id="toggle">Start timer</button>
+    </form>
+    <p class="warn" id="warn" hidden>Not saved: this browser blocks storage, so entries are lost when you close the tab.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <section aria-labelledby="h-today">
+    <div class="head">
+      <h2 class="t-heading" id="h-today">Today</h2>
+      <span class="t-meta" id="date"></span>
+      <span class="t-heading num total" id="today-total"></span>
+    </div>
+    <div class="tl-scroll" id="tl-scroll" tabindex="0" aria-label="Timeline of today, scrolls sideways">
+      <div class="tl-inner">
+        <div class="timeline" id="timeline" role="img"></div>
+        <div class="timeline-axis" id="axis" aria-hidden="true"></div>
+      </div>
+    </div>
+    <ul class="entries" id="entries"></ul>
+  </section>
+
+  <section aria-labelledby="h-week">
+    <div class="head">
+      <h2 class="t-heading" id="h-week">This week by project</h2>
+      <span class="t-meta" id="week-range"></span>
+      <span class="t-heading num total" id="week-total"></span>
+    </div>
+    <div id="week"></div>
+  </section>
+</main>
+
+<script>
+const KEY = 'tally.v1', H = 36e5, M = 6e4;
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = ms => { const m = Math.floor(ms / M), h = Math.floor(m / 60); return h ? `${h} h ${pad(m % 60)} min` : `${m} min`; };
+const clock = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 3600)}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
+const hm = t => { const d = new Date(t); return `${d.getHours()}:${pad(d.getMinutes())}`; };
+const dayStart = t => new Date(t).setHours(0, 0, 0, 0);
+const weekStart = t => { const d = new Date(dayStart(t)); return d.setDate(d.getDate() - (d.getDay() + 6) % 7); }; // Monday
+console.assert(fmt(90 * M) === '1 h 30 min' && fmt(59 * M) === '59 min' && clock(3725e3) === '1:02:05', 'format self-check');
+
+// Sample data for the first open: Monday to yesterday from two day templates, today from fixed slots that have already ended.
+function seed(now) {
+  const d0 = dayStart(now), entries = [];
+  const A = [['p1', 8.5, 10.25, 'Homepage layout'], ['p2', 10.5, 12, 'Logo directions'], ['p1', 13, 15.5, 'Product page templates'], ['p3', 15.75, 17.25, 'Icon grid']];
+  const B = [['p2', 9, 11.5, 'Brand guidelines draft'], ['p4', 11.5, 12.25, 'Invoices for October'], ['p1', 13.25, 16, 'Checkout flow'], ['p3', 16.25, 17, 'Tab bar icons']];
+  for (let d = new Date(weekStart(now)), i = 0; +d < d0 && i < 5; d.setDate(d.getDate() + 1), i++)
+    for (const [p, s, e, note] of i % 2 ? B : A) entries.push({ p, note, start: +d + s * H, end: +d + e * H });
+  // shortcut: today's sample entries are fixed morning-to-afternoon slots, so a first open before 10:00 shows an empty day.
+  for (const [p, s, e, note] of [['p1', 8.5, 10, 'Homepage layout'], ['p2', 10.25, 11.25, 'Logo review call'], ['p4', 11.5, 12.25, 'Invoices for October'], ['p1', 13, 14 + 1 / 6, 'Checkout flow']])
+    if (d0 + e * H <= now) entries.push({ p, note, start: d0 + s * H, end: d0 + e * H });
+  return {
+    // shortcut: tints cover five projects; past that, group the smallest as "Other" in --data-neutral.
+    projects: [{ id: 'p1', name: 'Lumen Bakery website' }, { id: 'p2', name: 'Harbour Co. rebrand' }, { id: 'p3', name: 'Fjord app icons' }, { id: 'p4', name: 'Admin and invoicing' }],
+    entries, running: null, last: 'p1'
+  };
+}
+
+let state;
+try { state = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+if (!state || !Array.isArray(state.entries) || !Array.isArray(state.projects)) state = seed(Date.now());
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { $('warn').hidden = false; }
+}
+save();
+
+const project = id => state.projects.find(p => p.id === id) || { name: 'Unknown project' };
+const tint = id => { const i = state.projects.findIndex(p => p.id === id); return i >= 0 && i < 5 ? `data-${i + 1}` : ''; };
+// Every entry that overlaps [from, to), clipped to it, with the running one ending now.
+function within(from, to, now) {
+  const all = state.running ? [...state.entries, { ...state.running, end: now, live: true }] : state.entries;
+  return all.map(e => ({ ...e, s: Math.max(e.start, from), en: Math.min(e.end, to) })).filter(e => e.en > e.s || (e.live && e.start >= from));
+}
+
+let scrolled = false;
+function render(now) {
+  const d0 = dayStart(now), w0 = weekStart(now);
+  const today = within(d0, d0 + 24 * H, now).sort((a, b) => b.s - a.s);
+  const sum = list => list.reduce((n, e) => n + e.en - e.s, 0);
+
+  $('date').textContent = new Date(now).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('today-total').textContent = fmt(sum(today));
+
+  // Timeline: 8:00 to 18:00, widened in two-hour steps to hold every entry and the present.
+  let a = Math.min(8, Math.floor((Math.min(now, ...today.map(e => e.s)) - d0) / H));
+  let b = Math.max(18, Math.ceil((now - d0) / H), ...today.map(e => Math.ceil((e.en - d0) / H)));
+  if ((b - a) % 2) b < 24 ? b++ : a--;
+  const pos = t => ((t - d0) / H - a) / (b - a) * 100;
+  const label = e => `${esc(project(e.p).name)}${e.note ? ', ' + esc(e.note) : ''}, ${hm(e.s)} to ${e.live ? 'now' : hm(e.en)}, ${fmt(e.en - e.s)}`;
+  $('timeline').innerHTML = today.map(e =>
+    `<div class="span ${tint(e.p)}" data-e="${e.start}" style="left:${pos(e.s)}%; width:${pos(e.en) - pos(e.s)}%" title="${label(e)}">${esc(project(e.p).name)}</div>`
+  ).join('') + `<div class="now" style="left:${pos(now)}%" title="Now, ${hm(now)}"></div>`;
+  $('timeline').setAttribute('aria-label', `Today from ${a}:00 to ${b}:00, ${today.length} entries, listed below`);
+  let ticks = '';
+  for (let h = a; h <= b; h += 2) ticks += `<span>${h}:00</span>`;
+  $('axis').innerHTML = ticks;
+  if (!scrolled) { const sc = $('tl-scroll'); sc.scrollLeft = sc.scrollWidth * pos(now) / 100 - sc.clientWidth / 2; scrolled = true; }
+
+  $('entries').innerHTML = today.length ? today.map(e => `
+    <li class="entry" data-e="${e.start}">
+      <span class="swatch ${tint(e.p)}"></span>
+      <div class="what">
+        <div class="title"><span>${esc(e.note || project(e.p).name)}</span>${e.live ? '<span class="badge">Running</span>' : ''}</div>
+        <div class="t-meta num">${e.note ? esc(project(e.p).name) + ' · ' : ''}${hm(e.s)} – ${e.live ? 'now' : hm(e.en)}</div>
+      </div>
+      <span class="dur num">${fmt(e.en - e.s)}</span>
+    </li>`).join('')
+    : '<li class="note">Nothing tracked today. Start the timer and your first entry appears here.</li>';
+
+  // Week: hours per project, largest first, each bar a share of the largest.
+  const week = within(w0, w0 + 7 * 24 * H, now), per = {};
+  for (const e of week) per[e.p] = (per[e.p] || 0) + e.en - e.s;
+  const rows = Object.entries(per).sort((x, y) => y[1] - x[1]), max = rows.length ? rows[0][1] : 0;
+  const day = (t, o) => new Date(t).toLocaleDateString('en-GB', o);
+  $('week-range').textContent = `${day(w0, { day: 'numeric' })} – ${day(w0 + 6.5 * 24 * H, { day: 'numeric', month: 'short' })}`;
+  $('week-total').textContent = fmt(sum(week));
+  $('week').innerHTML = rows.length ? `<div class="bar-list">${rows.map(([p, ms]) => `
+      <span class="name"><span class="swatch ${tint(p)}"></span><span>${esc(project(p).name)}</span></span>
+      <div><div class="bar ${tint(p)}" style="width:${max ? ms / max * 100 : 0}%"></div></div>
+      <span class="num">${fmt(ms)}</span>`).join('')}</div>`
+    : '<p class="note">No hours this week yet. Each project you track gets a bar here.</p>';
+}
+
+// The clock moves every second; durations are shown in minutes, so the rest redraws once a minute.
+let lastMin;
+function tick() {
+  const now = Date.now(), r = state.running;
+  $('clock').textContent = clock(r ? now - r.start : 0);
+  document.title = r ? `${clock(now - r.start)} · ${project(r.p).name}` : 'Timer · Tally';
+  const m = Math.floor(now / M);
+  if (m !== lastMin) { lastMin = m; render(now); }
+}
+function sync() {
+  $('toggle').textContent = state.running ? 'Stop timer' : 'Start timer';
+  $('clock').classList.toggle('on', !!state.running);
+  lastMin = null;
+  tick();
+}
+
+$('project').innerHTML = state.projects.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+$('project').value = state.running ? state.running.p : state.last;
+if (state.running) $('note').value = state.running.note;
+
+$('form').onsubmit = e => {
+  e.preventDefault();
+  const now = Date.now(), r = state.running;
+  if (r) {
+    state.entries.push({ p: r.p, note: r.note, start: r.start, end: now });
+    state.running = null;
+    $('note').value = '';
+  } else {
+    state.running = { p: $('project').value, note: $('note').value.trim(), start: now };
+  }
+  save(); sync();
+};
+// Note and project stay editable while the timer runs and change the running entry in place.
+$('note').oninput = () => { if (state.running) { state.running.note = $('note').value.trim(); save(); sync(); } };
+$('project').onchange = () => { state.last = $('project').value; if (state.running) state.running.p = state.last; save(); sync(); };
+
+// Pointing at an interval highlights its row, and the other way round.
+const mark = (e, on) => { const el = e.target.closest && e.target.closest('[data-e]'); if (el) document.querySelectorAll(`[data-e="${el.dataset.e}"]`).forEach(n => n.classList.toggle('hl', on)); };
+document.addEventListener('mouseover', e => mark(e, true));
+document.addEventListener('mouseout', e => mark(e, false));
+
+sync();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>

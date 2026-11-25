@@ -151,3 +151,17 @@ buttons on phones, and one filled plus at most one outlined action in the first 
   screen.
 - Mistral's product has been renamed from Le Chat to Mistral Vibe; conversation spacing there was
   read from code, not measured.
+
+### Charts and data colours
+
+The rules for drawing data (`ux.md` "Show data in its shape", `ui.md` "Data colours" and "Chart")
+do not come from the four products. They were added in version 1.1.0 from two sources:
+
+- The [benchmark](https://github.com/Cyberoiide/clear-ui/tree/main/benchmark): on a time-tracking
+  screen, the page built with `frontend-design` drew the day as a timeline of intervals and was
+  understood at once; the page built with this skill listed the same entries as rows, and its three
+  week bars could not be told apart.
+- Three dashboard screenshots chosen by the author as references (two from ChartMogul, one concept
+  design). What was taken from them: pale tints inside chart marks with dark labels on the marks,
+  grey bars with a single highlighted one, dashed gridlines, and labelled bars for funnel stages.
+  Only the screenshots were read; no CSS was measured, so the tint values are this system's own.

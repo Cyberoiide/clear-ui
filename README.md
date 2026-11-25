@@ -87,6 +87,8 @@ skills/clear-ui/
 
 - Ink `#0d0d0d` on white, three text greys, weights 400, 500 and 600 only.
 - Colour means status: green, amber, red, blue. No accent colour by default.
+- Data is drawn when it has a shape: a timeline for intervals, sorted bars for amounts. Charts are
+  grey with one ink mark; five pale tints tell categories apart.
 - Borders for what sits on the page; shadows only for what floats above it.
 - Buttons and inputs 28, 32, 40, 48 or 56px high, radius about a third of the height.
 - A 4px spacing grid; Inter or the system font at 14px.

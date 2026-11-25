@@ -14,6 +14,10 @@
     .item             nav or list row       .item.on  the selected one
     .btn              secondary action      .btn.primary  THE primary action of the screen
     .field            input                 .tag   small label
+    .bars             name / bar / number rows: <span>Name</span><i style="width:60%"></i><span>3 h</span>
+    .tl               timeline track; each <i style="left:10%; width:20%"> is one interval, to scale
+    .cols             column chart: <i style="height:40%"></i>, add class="on" to the current one
+  Where a direction shows data, draw it with these instead of a box named "chart".
   Write real labels inside the blocks. No colour: that is Part 2.
 -->
 <style>
@@ -42,10 +46,17 @@
   .item { padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .item.on { background: #dcdcdc; font-weight: 600; }
   .list .item { border-bottom: 1px solid #e6e6e6; border-radius: 0; padding: 6px 4px; }
-  .btn { border: 1px solid #999; border-radius: 99px; padding: 2px 8px; white-space: nowrap; background: #fff; }
+  .btn { border: 1px solid #999; border-radius: 6px; padding: 2px 8px; white-space: nowrap; background: #fff; }
   .btn.primary { background: #222; border-color: #222; color: #fff; }
   .field { border: 1px solid #aaa; border-radius: 4px; padding: 3px 6px; color: #888; background: #fff; }
   .tag { border: 1px solid #bbb; border-radius: 99px; padding: 0 5px; color: #666; }
+  .bars { display: grid; grid-template-columns: max-content 1fr max-content; gap: 4px 6px; align-items: center; }
+  .bars i { height: 8px; border-radius: 2px; background: #bbb; }
+  .tl { position: relative; height: 18px; border: 1px solid #ddd; border-radius: 4px; background: #f6f6f6; }
+  .tl i { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; background: #aaa; }
+  .cols { display: flex; align-items: flex-end; gap: 4px; height: 56px; border-bottom: 1px solid #bbb; }
+  .cols i { flex: 1; border-radius: 2px 2px 0 0; background: #ccc; }
+  .cols i.on { background: #222; }
   .muted { color: #888; }
   .title { font-weight: 600; font-size: 12px; }
 </style>

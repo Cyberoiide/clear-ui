@@ -4,7 +4,7 @@ description: >-
   UX-first design for clean, black-and-white product UI in the spirit of Linear, ChatGPT, Mistral
   and Alan. Works in two parts: first propose a few UX directions as wireframes in the chat and get
   the user's choice, then build the UI with a fixed token system (ink on white, hairline borders,
-  one filled button per screen, colour only for status). Use this whenever the user asks to design,
+  one filled button per screen, colour only for status and chart categories). Use this whenever the user asks to design,
   build, redesign, restyle or review any interface: a web app, dashboard, admin panel, landing page,
   form, settings page, onboarding flow, chat interface, mobile screen or single component. Also use
   it when they say "clean", "simple", "minimal", "like Linear", "black and white", "not AI slop",
@@ -16,7 +16,7 @@ description: >-
 
 A way of designing interfaces where the user always knows where they are and what to do next, and
 nothing on screen is there for decoration. White page, near-black ink, hairline borders, one filled
-button per screen, colour only to report status.
+button per screen, colour only to report status or tell chart categories apart.
 
 The work has two parts, in this order:
 
@@ -58,6 +58,10 @@ how the four reference products behave. The ones that shape structure most:
 - **Every action answers back:** the change itself is the feedback, undo instead of confirmation
   where possible, and typed text is never lost.
 - **Outcome first, in the user's words:** the result, then a breakdown that adds up.
+- **Data in its shape:** things with a start and an end go on a timeline, amounts per category
+  become sorted bars, stages become a funnel, and one to three numbers stay numbers. A chart has to
+  answer a question the rows cannot; the rows stay below it for acting. Draw the chart in the
+  wireframe.
 
 Skip Part 1 only when the user asks to go straight to the UI, or when the task changes the look of
 an existing screen without changing its structure. Say that you are skipping it.
@@ -75,6 +79,9 @@ look generated. The rules that shape everything else:
 - **Colour means status.** Green, amber, red and blue appear only for success, warning, error and
   information. No accent colour by default; a brand colour is limited to the logo and small state
   signals.
+- **Charts are grey with one ink mark.** Five pale tints exist only to tell categories apart inside
+  a chart, and a category keeps its tint in the rows below it. Every mark has its name and value in
+  text.
 - **Borders on the page, shadows above it.** Static surfaces get a 1px border at 8 to 16% ink and no
   shadow. Menus, dialogs and toasts get a shadow and no border.
 - **Fixed, generous sizes.** Buttons and inputs are 28, 32, 40, 48 or 56 high with radius about a

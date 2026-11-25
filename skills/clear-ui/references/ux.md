@@ -91,6 +91,9 @@ action that leads to the next screen marked.
   draw that state too. An empty screen is where a new user starts.
 - **Draw the small screen** when the product is used on phones. A direction that only works at
   1440px is not a direction.
+- **Draw the chart, not a box named "chart".** Where a direction shows data, draw its bars,
+  intervals or columns with realistic proportions and labels (`.bars`, `.tl` and `.cols` in the
+  kit). Whether the data is drawn or listed is a structural difference between directions.
 - **Stay low fidelity.** No icons beyond a placeholder square, no shadows, no imagery. Ten minutes of
   work per direction, not an hour.
 
@@ -229,6 +232,33 @@ can I do here, and what just happened? The rest is about asking less of them and
 - **Compare options on the same few lines**, each with a one-sentence promise and a price that
   states its assumption: "From €50 a month, for one person aged 35". [Alan]
 
+### Show data in its shape
+
+Rows hide the shape of data. Before choosing a list or a table, ask what question the user brings
+to the data and what shape it has. If a drawing answers the question faster than reading rows, draw
+it. [Benchmark run of this skill; reference dashboards supplied by the author, see `sources.md`]
+
+| The data is | The user asks | Show it as |
+|---|---|---|
+| Things with a start and an end: time entries, bookings, shifts, runs | When, how long, where are the gaps | A timeline: one track, each interval drawn to scale, a labelled axis |
+| An amount per category | Which is biggest, how do they compare | Horizontal bars sorted by size, name on the left, number on the right |
+| One measure over time | Is it going up or down | Columns or a line, with the current period marked |
+| Stages something passes through | Where does it drop off | One bar per stage, in order, each with its count and share |
+| Progress toward a limit | How much is left | One bar, with "x of y" in words |
+| One to three numbers | What is it | The numbers. No chart |
+| Rows the user acts on | Find one and open it | A table or a list |
+
+- **A chart has to answer a question the rows cannot answer at a glance.** Fewer than about four
+  points, or a chart added because a dashboard "should" have one, is a number instead.
+- **Chart above, rows below.** The chart gives the overview and the rows are where the user acts.
+  Both use the same names in the same order, and pointing at one highlights the other.
+- **Write the name and the value on or beside every mark.** A legend is the fallback when labels
+  do not fit, and it sits next to the chart, not below the fold.
+- **Keep the scale honest:** bars start at zero, intervals are to scale, and charts that sit side
+  by side share a unit.
+- **Mark the present:** a "now" line on a timeline, the current period on a time series.
+- **An empty chart still shows its axis,** with one sentence saying what will appear on it.
+
 ### Words
 
 - **Options in the user's words, with the technical term in grey underneath.** [Alan: "Des soins
@@ -278,6 +308,9 @@ already know how they work.
 - **Guided flow:** one question per screen, answers as large tappable options, named stages, back
   always available, the effort announced at the start and a summary before the final commit.
 - **Result with breakdown:** the outcome in one line, then the parts that add up to it.
+- **Dashboard:** at most three numbers the user came for, then one chart that answers the main
+  question, then the rows behind it. Each chart has a sentence-case title that names what it
+  shows, and its own period control only if it differs from the page's.
 - **Empty state:** what this place is for and one button to create the first item.
 - **Settings:** a left list of sections and a narrow single-column list of settings that apply
   immediately, each with one sentence saying what it changes.

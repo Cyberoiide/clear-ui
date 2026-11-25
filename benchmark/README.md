@@ -91,6 +91,28 @@ projects, four, and three), so part of the gap in elements and words is sample d
   that the user would have chosen it.
 - **None of the three** produced gradients, card shadows, low-contrast text or load animations.
 
+## After the benchmark: `clear-ui` 1.1.0
+
+The run above showed that `clear-ui` listed the day's entries as rows where `frontend-design` drew
+them as a timeline, and that its week bars could not be told apart. Version 1.1.0 adds a rule for
+drawing data in its shape and five pale tints for chart categories. The same prompt was run again
+with it, by one new agent:
+
+| `clear-ui` 1.0.0 | `clear-ui` 1.1.0 |
+|---|---|
+| ![](shots/clear-ui-final.png) | ![](shots/clear-ui-1.1.0-final.png) |
+
+The day is now a timeline with a line for the current time, each project has a tint, and a square
+of that tint ties each entry to its project. Files: [page](runs/clear-ui-1.1.0/index.html),
+[first reply](runs/clear-ui-1.1.0/first-reply.md), [wireframes](shots/clear-ui-1.1.0-first.png),
+[phone](shots/clear-ui-1.1.0-phone.png).
+
+Read this with care: the rule was written after seeing this exact prompt, so the rerun shows that
+the rule is followed, not that it helps on other screens. Its counts in `metrics.json` are 5 font
+sizes, 5 radii, 77 elements and 0 hues; the 0 is because `measure.js` ignores colours as pale as
+the tints (four are on screen), and the 9 "shadows" are 1px rings drawn with `box-shadow`. Entries
+still cannot be deleted.
+
 ## Limits
 
 - One prompt, one run each. Another run of the same skill would differ.
