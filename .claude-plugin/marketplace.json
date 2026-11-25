@@ -1,0 +1,14 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "clear-ui",
+  "description": "UX-first design skill for clean, black-and-white product UI.",
+  "owner": { "name": "Cyberoiide" },
+  "plugins": [
+    {
+      "name": "clear-ui",
+      "description": "Propose UX directions as wireframes, then build the UI with a fixed black-and-white token system.",
+      "source": "./",
+      "category": "design"
+    }
+  ]
+}

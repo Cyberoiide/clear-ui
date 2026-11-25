@@ -1,0 +1,24 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the tag matches plugin.json
+        run: |
+          v=$(jq -r .version .claude-plugin/plugin.json)
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != plugin.json version $v"; exit 1; }
+      - name: Package the skill
+        run: |
+          cd skills
+          zip -r ../clear-ui.zip clear-ui
+          cp ../clear-ui.zip ../clear-ui.skill
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" clear-ui.zip clear-ui.skill --title "$GITHUB_REF_NAME" --generate-notes

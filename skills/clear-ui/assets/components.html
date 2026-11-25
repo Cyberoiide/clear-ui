@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>clear-ui component reference</title>
+<!-- Visual reference for Part 2 (UI). Open in a browser next to tokens.css.
+     Add data-theme="dark" on <html> to see the dark theme. -->
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* Page-only layout helpers; not part of the system. */
+  .stack { display: grid; gap: var(--space-10); max-width: 960px; }
+  .group { display: grid; gap: var(--space-3); }
+  .inline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); align-items: start; }
+  .card.flush { padding: 0; overflow-x: auto; } /* a wide table scrolls inside its own card on phones */
+  @media (max-width: 800px) { .shell { grid-template-columns: 1fr; } .sidebar { display: none; } .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <nav class="sidebar" aria-label="Main">
+    <div class="nav-item" style="color:var(--text); font-weight:500"><span class="avatar">A</span> Acme Studio</div>
+    <div class="nav-item" style="margin:4px 0 8px; background:var(--bg); box-shadow:inset 0 0 0 1px var(--border)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      Search <span class="kbd" style="margin-left:auto">⌘K</span>
+    </div>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg> Home</a>
+    <a class="nav-item" href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg> Invoices <span class="count">12</span></a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg> Clients</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 4 3 5-7"/></svg> Reports</a>
+    <div class="nav-label">Workspace</div>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg> Settings</a>
+  </nav>
+
+  <main>
+    <header class="topbar">
+      <h1>Invoices</h1>
+      <button class="btn btn-ghost">Export</button>
+      <button class="btn">New invoice</button>
+    </header>
+
+    <div class="content">
+      <div class="stack">
+
+        <section class="group" aria-label="Summary">
+          <div class="grid-3">
+            <div class="card"><div class="stat-label">Outstanding</div><div class="stat-value">€18,420.00</div></div>
+            <div class="card"><div class="stat-label">Paid this month</div><div class="stat-value">€42,910.50</div></div>
+            <div class="card"><div class="stat-label">Overdue</div><div class="stat-value">3 invoices</div></div>
+          </div>
+        </section>
+
+        <section class="group" aria-label="Invoice list">
+          <div class="tabs" role="tablist">
+            <button class="tab" role="tab" aria-selected="true">All</button>
+            <button class="tab" role="tab" aria-selected="false">Unpaid</button>
+            <button class="tab" role="tab" aria-selected="false">Drafts</button>
+          </div>
+          <div class="card flush">
+            <table class="table">
+              <thead><tr><th>Invoice</th><th>Client</th><th>Status</th><th>Due</th><th class="num">Amount</th></tr></thead>
+              <tbody>
+                <tr><td>INV-0142</td><td>Northwind Traders</td><td><span class="badge badge-dot badge-success">Paid</span></td><td class="t-small">12 Nov</td><td class="num">€4,200.00</td></tr>
+                <tr><td>INV-0141</td><td>Bergström &amp; Lindqvist Arkitekter</td><td><span class="badge badge-dot badge-warning">Due soon</span></td><td class="t-small">28 Nov</td><td class="num">€12,750.00</td></tr>
+                <tr><td>INV-0140</td><td>Halcyon Labs</td><td><span class="badge badge-dot badge-danger">Overdue</span></td><td class="t-small">3 Nov</td><td class="num">€1,470.00</td></tr>
+                <tr><td>INV-0139</td><td>Maple &amp; Co</td><td><span class="badge">Draft</span></td><td class="t-small">Not sent</td><td class="num">€860.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2 class="t-heading">Buttons</h2>
+          <p class="t-small">One filled button per screen. Sizes: 28, 32 (product default), 40 (forms), 48 (marketing, touch), 56 (hero).</p>
+          <div class="inline">
+            <button class="btn">Send invoice</button>
+            <button class="btn btn-secondary">Save draft</button>
+            <button class="btn btn-soft">Duplicate</button>
+            <button class="btn btn-ghost">Cancel</button>
+            <button class="btn btn-danger">Delete</button>
+            <button class="btn" disabled>Send invoice</button>
+          </div>
+          <div class="inline">
+            <button class="btn btn-xs">28 Filter</button>
+            <button class="btn">32 Default</button>
+            <button class="btn btn-md">40 Continue</button>
+            <button class="btn btn-lg">48 Get started</button>
+            <button class="btn btn-xl">56 Start free trial</button>
+            <button class="btn btn-secondary btn-lg">48 See pricing</button>
+          </div>
+        </section>
+
+        <section class="grid-2">
+          <div class="group">
+            <h2 class="t-heading">Form</h2>
+            <div class="field">
+              <label class="label" for="client">Client name</label>
+              <input class="input" id="client" value="Northwind Traders">
+            </div>
+            <div class="field">
+              <label class="label" for="email">Billing email</label>
+              <input class="input" id="email" aria-invalid="true" value="billing@northwind" aria-describedby="email-err">
+              <span class="hint error" id="email-err">Enter a full address, like billing@northwind.com.</span>
+            </div>
+            <div class="field">
+              <label class="label" for="note">Note on the invoice</label>
+              <textarea class="textarea" id="note" placeholder="Shown above the totals"></textarea>
+              <span class="hint">Optional. The client sees this.</span>
+            </div>
+            <label class="inline"><input type="checkbox" class="checkbox" checked> Send a copy to me</label>
+            <label class="inline"><input type="checkbox" class="switch" checked> Remind the client 3 days before the due date</label>
+            <div class="inline">
+              <div class="segmented"><button aria-pressed="true">Monthly</button><button aria-pressed="false">Yearly</button></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2 class="t-heading">Floating surfaces</h2>
+            <div class="menu" style="width:220px">
+              <div class="menu-item" data-active>Open <span class="kbd">↵</span></div>
+              <div class="menu-item">Duplicate <span class="kbd">D</span></div>
+              <div class="menu-item">Download PDF</div>
+              <div class="menu-sep"></div>
+              <div class="menu-item" style="color:var(--danger)">Delete</div>
+            </div>
+            <div class="dialog" style="width:100%">
+              <h3 class="t-heading">Delete invoice INV-0139?</h3>
+              <p class="t-small" style="margin-top:8px">The draft and its 4 line items will be removed. This can't be undone.</p>
+              <div class="dialog-actions">
+                <button class="btn btn-ghost">Cancel</button>
+                <button class="btn btn-danger-solid">Delete invoice</button>
+              </div>
+            </div>
+            <div class="inline">
+              <span class="tooltip">Copy link</span>
+              <div class="toast">Invoice sent to Northwind Traders <button class="btn btn-ghost btn-xs">Undo</button></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2 class="t-heading">Empty state</h2>
+          <div class="card">
+            <div class="empty">
+              <h3 class="t-heading">No clients yet</h3>
+              <p>Clients are the people and companies you send invoices to. Add one to create your first invoice.</p>
+              <button class="btn btn-md">Add a client</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2 class="t-heading">Conversation</h2>
+          <div class="thread">
+            <div class="msg-user">Which invoices are overdue, and by how much?</div>
+            <div class="msg-assistant">One invoice is overdue: INV-0140 for Halcyon Labs, €1,470.00, due on 3 November. Two more are due within the next week.</div>
+          </div>
+          <div class="composer">
+            <textarea rows="1" placeholder="Ask about your invoices"></textarea>
+            <button class="btn btn-icon" aria-label="Send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

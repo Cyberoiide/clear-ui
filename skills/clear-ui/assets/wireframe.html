@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UX directions</title>
+<!--
+  Grayscale wireframe kit for Part 1 (UX). Copy this file, keep the <style>, and replace the three
+  directions with the real screen. Building blocks:
+    .frame            one screen (add .phone for a narrow one)
+    .row / .col       flex containers; .grow fills remaining space
+    .side             sidebar column        .top   title/toolbar row
+    .box              generic region        .line  a line of text (.w30 .w50 .w70 set its width)
+    .item             nav or list row       .item.on  the selected one
+    .btn              secondary action      .btn.primary  THE primary action of the screen
+    .field            input                 .tag   small label
+  Write real labels inside the blocks. No colour: that is Part 2.
+-->
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font: 13px/1.45 system-ui, sans-serif; color: #222; background: #fff; padding: 24px; }
+  h1 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .lede { color: #666; margin-bottom: 20px; max-width: 70ch; }
+  .directions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .direction h2 { font-size: 14px; font-weight: 600; }
+  .direction .idea { color: #555; margin: 2px 0 10px; }
+  .direction dl { margin-top: 10px; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+  .direction dt { color: #777; }
+  .pick { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid #222; border-radius: 99px; font-size: 11px; font-weight: 500; }
+
+  .frame { border: 1px solid #bbb; border-radius: 8px; height: 300px; overflow: hidden; display: flex; background: #fff; font-size: 11px; }
+  .frame.phone { width: 190px; height: 340px; flex-direction: column; }
+  .row { display: flex; gap: 6px; align-items: center; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .grow { flex: 1; min-width: 0; }
+  .pad { padding: 8px; }
+  .side { width: 84px; background: #f1f1f1; border-right: 1px solid #ddd; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .top { padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 6px; }
+  .box { border: 1px solid #ccc; border-radius: 4px; padding: 6px; background: #fafafa; }
+  .line { height: 6px; border-radius: 3px; background: #d5d5d5; }
+  .w30 { width: 30%; } .w50 { width: 50%; } .w70 { width: 70%; }
+  .item { padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item.on { background: #dcdcdc; font-weight: 600; }
+  .list .item { border-bottom: 1px solid #e6e6e6; border-radius: 0; padding: 6px 4px; }
+  .btn { border: 1px solid #999; border-radius: 99px; padding: 2px 8px; white-space: nowrap; background: #fff; }
+  .btn.primary { background: #222; border-color: #222; color: #fff; }
+  .field { border: 1px solid #aaa; border-radius: 4px; padding: 3px 6px; color: #888; background: #fff; }
+  .tag { border: 1px solid #bbb; border-radius: 99px; padding: 0 5px; color: #666; }
+  .muted { color: #888; }
+  .title { font-weight: 600; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Projects screen: three directions</h1>
+<p class="lede">Job of the screen: find a project and open it, or start a new one. The dark button is the primary action in each direction.</p>
+
+<div class="directions">
+
+  <section class="direction">
+    <h2>List with side panel <span class="pick">Recommended</span></h2>
+    <p class="idea">A dense list; clicking a row opens its detail beside the list.</p>
+    <div class="frame">
+      <div class="side">
+        <div class="item title">Acme</div>
+        <div class="field">Search</div>
+        <div class="item on">Projects</div>
+        <div class="item">Clients</div>
+        <div class="item">Invoices</div>
+        <div class="item">Settings</div>
+      </div>
+      <div class="col grow" style="gap:0">
+        <div class="top"><span class="title grow">Projects</span><span class="btn primary">New project</span></div>
+        <div class="row grow" style="align-items:stretch; gap:0">
+          <div class="list grow pad">
+            <div class="item on">Website redesign <span class="tag">Active</span></div>
+            <div class="item">Mobile app v2 <span class="tag">Active</span></div>
+            <div class="item">Brand guidelines <span class="tag">Done</span></div>
+            <div class="item muted">Q3 campaign <span class="tag">Paused</span></div>
+          </div>
+          <div class="col pad" style="width:38%; border-left:1px solid #ddd">
+            <span class="title">Website redesign</span>
+            <div class="line w70"></div><div class="line w50"></div>
+            <div class="box col"><div class="line w70"></div><div class="line w30"></div></div>
+            <span class="btn" style="align-self:flex-start">Open project</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Best at</dt><dd>Comparing projects quickly without losing your place.</dd>
+      <dt>Costs</dt><dd>The panel is narrow; needs a separate layout on phones.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Card grid</h2>
+    <p class="idea">Each project is a card showing its status and progress at a glance.</p>
+    <div class="frame">
+      <div class="side">
+        <div class="item title">Acme</div>
+        <div class="field">Search</div>
+        <div class="item on">Projects</div>
+        <div class="item">Clients</div>
+        <div class="item">Invoices</div>
+        <div class="item">Settings</div>
+      </div>
+      <div class="col grow" style="gap:0">
+        <div class="top"><span class="title grow">Projects</span><span class="btn primary">New project</span></div>
+        <div class="pad" style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <div class="box col"><span class="title">Website redesign</span><span class="tag" style="align-self:flex-start">Active</span><div class="line w70"></div></div>
+          <div class="box col"><span class="title">Mobile app v2</span><span class="tag" style="align-self:flex-start">Active</span><div class="line w50"></div></div>
+          <div class="box col"><span class="title">Brand guidelines</span><span class="tag" style="align-self:flex-start">Done</span><div class="line w70"></div></div>
+          <div class="box col"><span class="title">Q3 campaign</span><span class="tag" style="align-self:flex-start">Paused</span><div class="line w30"></div></div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Best at</dt><dd>A few projects with rich status; works on phones as is.</dd>
+      <dt>Costs</dt><dd>Hard to scan past about twelve projects; opening one leaves the list.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Search first</h2>
+    <p class="idea">No list by default: a search box and the five most recent projects.</p>
+    <div class="frame">
+      <div class="col grow pad" style="align-items:center; justify-content:center; gap:10px">
+        <span class="title">Open a project</span>
+        <div class="field" style="width:70%">Search projects, clients, invoices</div>
+        <div class="list" style="width:70%">
+          <div class="item muted">Recent</div>
+          <div class="item">Website redesign</div>
+          <div class="item">Mobile app v2</div>
+          <div class="item">Brand guidelines</div>
+        </div>
+        <span class="btn primary">New project</span>
+      </div>
+    </div>
+    <dl>
+      <dt>Best at</dt><dd>Hundreds of projects, for people who know what they want.</dd>
+      <dt>Costs</dt><dd>No overview; newcomers can't browse what exists.</dd>
+    </dl>
+  </section>
+
+</div>
+</body>
+</html>
