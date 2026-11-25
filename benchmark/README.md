@@ -113,6 +113,11 @@ sizes, 5 radii, 77 elements and 0 hues; the 0 is because `measure.js` ignores co
 the tints (four are on screen), and the 9 "shadows" are 1px rings drawn with `box-shadow`. Entries
 still cannot be deleted.
 
+## Second benchmark
+
+A second prompt, a subscription dashboard, was run with all three skills and `clear-ui` 1.1.0:
+[benchmark 2](2-dashboard/README.md).
+
 ## Limits
 
 - One prompt, one run each. Another run of the same skill would differ.

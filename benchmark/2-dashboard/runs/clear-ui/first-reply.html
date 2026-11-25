@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscription dashboard: three directions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font: 13px/1.45 system-ui, sans-serif; color: #222; background: #fff; padding: 24px; }
+  h1 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .lede { color: #666; margin-bottom: 20px; max-width: 70ch; }
+  .directions { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+  .direction h2 { font-size: 14px; font-weight: 600; }
+  .direction .idea { color: #555; margin: 2px 0 10px; }
+  .direction dl { margin-top: 10px; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+  .direction dt { color: #777; }
+  .pick { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid #222; border-radius: 99px; font-size: 11px; font-weight: 500; }
+
+  .frame { border: 1px solid #bbb; border-radius: 8px; height: 470px; overflow: hidden; display: flex; background: #fff; font-size: 11px; }
+  .frame.phone { width: 190px; flex-direction: column; }
+  .row { display: flex; gap: 6px; align-items: center; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .grow { flex: 1; min-width: 0; }
+  .pad { padding: 8px; }
+  .side { width: 76px; background: #f1f1f1; border-right: 1px solid #ddd; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .top { padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 6px; }
+  .box { border: 1px solid #ccc; border-radius: 4px; padding: 6px; background: #fafafa; }
+  .item { padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item.on { background: #dcdcdc; font-weight: 600; }
+  .list .item { border-bottom: 1px solid #e6e6e6; border-radius: 0; padding: 5px 2px; display: flex; gap: 6px; }
+  .btn { border: 1px solid #999; border-radius: 6px; padding: 2px 8px; white-space: nowrap; background: #fff; }
+  .btn.primary { background: #222; border-color: #222; color: #fff; }
+  .bars { display: grid; grid-template-columns: max-content 1fr max-content; gap: 4px 6px; align-items: center; }
+  .bars i { height: 8px; border-radius: 2px; background: #bbb; }
+  .cols { display: flex; align-items: flex-end; gap: 4px; height: 44px; border-bottom: 1px solid #bbb; }
+  .cols i { flex: 1; border-radius: 2px 2px 0 0; background: #ccc; }
+  .cols i.on { background: #222; }
+  .muted { color: #888; }
+  .title { font-weight: 600; font-size: 12px; }
+  .big { font-weight: 600; font-size: 16px; }
+  .tabs { display: flex; gap: 10px; border-bottom: 1px solid #ddd; }
+  .tabs span { padding-bottom: 3px; color: #888; }
+  .tabs .on { color: #222; font-weight: 600; border-bottom: 2px solid #222; }
+  .r { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<h1>Subscription dashboard: three directions</h1>
+<p class="lede">Job of the screen: tell the founder how recurring revenue moved this month, where trials are lost, and who left. The dark button is the one primary action in each direction: writing to the customers who cancelled.</p>
+
+<div class="directions">
+
+  <section class="direction" style="grid-column:1/-1; max-width:760px">
+    <h2>One page, three answers in order <span class="pick">Recommended</span></h2>
+    <p class="idea">The three questions are answered top to bottom on one page: revenue and its breakdown, the trial funnel, then the cancellations table.</p>
+    <div class="row" style="align-items:flex-start; gap:10px">
+    <div class="frame grow">
+      <div class="side">
+        <div class="item title">Loopdesk</div>
+        <div class="item on">Overview</div>
+        <div class="item">Customers</div>
+        <div class="item">Trials</div>
+        <div class="item">Settings</div>
+      </div>
+      <div class="col grow" style="gap:0">
+        <div class="top"><span class="title grow">Overview</span><span class="muted">November, to the 25th</span></div>
+        <div class="col pad" style="gap:10px">
+          <div class="row" style="align-items:flex-start; gap:12px">
+            <div class="col grow" style="gap:2px">
+              <span class="muted">Monthly recurring revenue</span>
+              <span class="big">$18,420</span>
+              <span>Up $1,140 (6.6%) since October</span>
+              <div class="list" style="margin-top:4px">
+                <div class="item">October <span class="r">$17,280</span></div>
+                <div class="item">9 new customers <span class="r">+$1,460</span></div>
+                <div class="item">4 upgrades <span class="r">+$520</span></div>
+                <div class="item">2 downgrades <span class="r">−$130</span></div>
+                <div class="item">6 cancellations <span class="r">−$710</span></div>
+              </div>
+            </div>
+            <div class="col" style="width:38%">
+              <span class="muted">Last 6 months</span>
+              <div class="cols"><i style="height:64%"></i><i style="height:70%"></i><i style="height:77%"></i><i style="height:84%"></i><i style="height:94%"></i><i class="on" style="height:100%"></i></div>
+              <div class="row muted" style="justify-content:space-between"><span>Jun</span><span>Nov</span></div>
+            </div>
+          </div>
+          <div class="col" style="gap:4px">
+            <span class="title">Where October's trials dropped off</span>
+            <div class="bars">
+              <span>Started trial</span><i style="width:100%"></i><span>212</span>
+              <span>Connected an inbox</span><i style="width:70%"></i><span>148</span>
+              <span>Replied to a customer</span><i style="width:45%"></i><span>96</span>
+              <span>Added a card</span><i style="width:19%"></i><span>41</span>
+              <span>Paid first invoice</span><i style="width:16%"></i><span>34</span>
+            </div>
+          </div>
+          <div class="col" style="gap:2px">
+            <div class="row"><span class="title grow">Cancelled this month: 6 customers, $710</span><span class="btn primary">Email all 6</span></div>
+            <div class="list">
+              <div class="item muted">Customer <span class="r">Reason · MRR lost</span></div>
+              <div class="item">Kestrel Logistics <span class="r">Switched tool · $225</span></div>
+              <div class="item">Brightside Dental <span class="r">Too expensive · $225</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="top"><span class="title grow">Overview</span></div>
+      <div class="col pad grow" style="gap:8px">
+        <div class="col" style="gap:2px"><span class="muted">MRR, November</span><span class="big">$18,420</span><span>Up $1,140 (6.6%)</span></div>
+        <div class="cols" style="height:30px"><i style="height:64%"></i><i style="height:70%"></i><i style="height:77%"></i><i style="height:84%"></i><i style="height:94%"></i><i class="on" style="height:100%"></i></div>
+        <span class="title">Trial drop-off</span>
+        <div class="bars"><span>Started</span><i style="width:100%"></i><span>212</span><span>Connected</span><i style="width:70%"></i><span>148</span><span>Replied</span><i style="width:45%"></i><span>96</span><span>Card</span><i style="width:19%"></i><span>41</span><span>Paid</span><i style="width:16%"></i><span>34</span></div>
+        <span class="title">Cancelled: 6, $710</span>
+        <div class="list"><div class="item">Kestrel Logistics <span class="r">$225</span></div></div>
+        <span class="btn primary" style="text-align:center">Email all 6</span>
+      </div>
+      <div class="row" style="border-top:1px solid #ddd; padding:6px; justify-content:space-around"><span class="title">Overview</span><span class="muted">Customers</span><span class="muted">Trials</span></div>
+    </div>
+    </div>
+    <dl>
+      <dt>Clicks</dt><dd>0 to see all three answers; one scroll on a laptop.</dd>
+      <dt>Best at</dt><dd>Reading the month as one story, in the order you asked. The same layout works on a phone.</dd>
+      <dt>Costs</dt><dd>The cancellations table starts below the fold on a small laptop.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Revenue first, tabs for the rest</h2>
+    <p class="idea">Revenue takes the whole first view with a 12-month chart; the funnel and the cancellations sit behind two tabs below it.</p>
+    <div class="frame">
+      <div class="side">
+        <div class="item title">Loopdesk</div>
+        <div class="item on">Overview</div>
+        <div class="item">Customers</div>
+        <div class="item">Trials</div>
+        <div class="item">Settings</div>
+      </div>
+      <div class="col grow" style="gap:0">
+        <div class="top"><span class="title grow">Overview</span><span class="muted">November, to the 25th</span></div>
+        <div class="col pad" style="gap:10px">
+          <div class="col" style="gap:2px"><span class="muted">Monthly recurring revenue</span><span class="big">$18,420</span><span>Up $1,140 (6.6%) since October</span></div>
+          <div class="cols" style="height:110px"><i style="height:46%"></i><i style="height:49%"></i><i style="height:52%"></i><i style="height:55%"></i><i style="height:58%"></i><i style="height:61%"></i><i style="height:64%"></i><i style="height:70%"></i><i style="height:77%"></i><i style="height:84%"></i><i style="height:94%"></i><i class="on" style="height:100%"></i></div>
+          <div class="row muted" style="justify-content:space-between"><span>Dec</span><span>Mar</span><span>Jun</span><span>Sep</span><span>Nov</span></div>
+          <div class="tabs"><span class="on">Cancellations 6</span><span>Trial drop-off</span><span>What changed</span></div>
+          <div class="row"><span class="grow muted">6 customers, $710 a month</span><span class="btn primary">Email all 6</span></div>
+          <div class="list">
+            <div class="item muted">Customer <span class="r">Reason · MRR lost</span></div>
+            <div class="item">Kestrel Logistics <span class="r">Switched tool · $225</span></div>
+            <div class="item">Brightside Dental <span class="r">Too expensive · $225</span></div>
+            <div class="item">Fennel Labs <span class="r">Not using it · $95</span></div>
+            <div class="item">Moreno &amp; Park Studio <span class="r">No reason · $95</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Clicks</dt><dd>0 for revenue, 1 for the funnel, 1 for what changed.</dd>
+      <dt>Best at</dt><dd>The long revenue trend; nothing scrolls on desktop.</dd>
+      <dt>Costs</dt><dd>Two of your three questions are hidden until you click, and you can't see the funnel and the cancellations together.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Three panels side by side</h2>
+    <p class="idea">One panel per question, all in a single view with no scrolling and no tabs.</p>
+    <div class="frame">
+      <div class="col grow" style="gap:0">
+        <div class="top"><span class="title">Loopdesk</span><span class="item on">Overview</span><span class="item">Customers</span><span class="item">Trials</span><span class="grow"></span><span class="muted">November</span></div>
+        <div class="row pad grow" style="align-items:stretch">
+          <div class="box col grow">
+            <span class="title">Revenue</span>
+            <span class="big">$18,420</span>
+            <span>Up $1,140 (6.6%)</span>
+            <div class="cols"><i style="height:64%"></i><i style="height:70%"></i><i style="height:77%"></i><i style="height:84%"></i><i style="height:94%"></i><i class="on" style="height:100%"></i></div>
+            <div class="list">
+              <div class="item">New <span class="r">+$1,460</span></div>
+              <div class="item">Upgrades <span class="r">+$520</span></div>
+              <div class="item">Downgrades <span class="r">−$130</span></div>
+              <div class="item">Cancelled <span class="r">−$710</span></div>
+            </div>
+          </div>
+          <div class="box col grow">
+            <span class="title">Trial drop-off</span>
+            <span class="muted">212 trials in October</span>
+            <div class="bars">
+              <span>Started</span><i style="width:100%"></i><span>212</span>
+              <span>Connected</span><i style="width:70%"></i><span>148</span>
+              <span>Replied</span><i style="width:45%"></i><span>96</span>
+              <span>Card</span><i style="width:19%"></i><span>41</span>
+              <span>Paid</span><i style="width:16%"></i><span>34</span>
+            </div>
+          </div>
+          <div class="box col grow">
+            <span class="title">Cancelled: 6</span>
+            <span class="muted">$710 a month</span>
+            <div class="list">
+              <div class="item">Kestrel Logistics <span class="r">$225</span></div>
+              <div class="item">Brightside Dental <span class="r">$225</span></div>
+              <div class="item">Fennel Labs <span class="r">$95</span></div>
+              <div class="item">Moreno &amp; Park <span class="r">$95</span></div>
+              <div class="item">Tidewater Coffee <span class="r">$35</span></div>
+              <div class="item">Oakhurst Property <span class="r">$35</span></div>
+            </div>
+            <span class="btn primary" style="align-self:flex-start">Email all 6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Clicks</dt><dd>0, and no scroll on a wide screen.</dd>
+      <dt>Best at</dt><dd>A glance on a large monitor.</dd>
+      <dt>Costs</dt><dd>Each panel is narrow: stage names get shortened and the cancellation reasons and dates don't fit. On a phone it stacks into the first direction anyway.</dd>
+    </dl>
+  </section>
+
+</div>
+</body>
+</html>

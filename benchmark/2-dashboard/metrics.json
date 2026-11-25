@@ -1,0 +1,5 @@
+{
+  "clear-ui": {"hues":2,"gradients":0,"shadows":0,"animated":0,"filledButtons":1,"fontFamilies":1,"fontSizes":4,"fontWeights":3,"radii":5,"lowContrastText":0,"textElements":102,"visibleElements":158,"words":228, "bytes": 14682},
+  "frontend-design": {"hues":3,"gradients":5,"shadows":0,"animated":0,"filledButtons":1,"fontFamilies":1,"fontSizes":8,"fontWeights":3,"radii":1,"lowContrastText":0,"textElements":107,"visibleElements":169,"words":354, "bytes": 16058},
+  "ui-ux-pro-max": {"hues":4,"gradients":0,"shadows":0,"animated":0,"filledButtons":0,"fontFamilies":2,"fontSizes":7,"fontWeights":4,"radii":4,"lowContrastText":0,"textElements":183,"visibleElements":336,"words":354, "bytes": 22973}
+}

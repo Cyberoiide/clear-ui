@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Screenshots and measures each run in benchmark/runs/<skill>/.
-# Usage: CHROME=/path/to/chrome benchmark/run.sh
+# Usage: CHROME=/path/to/chrome benchmark/run.sh [folder holding runs/, default: benchmark/]
 set -euo pipefail
-here="$(cd "$(dirname "$0")" && pwd)"
+tools="$(cd "$(dirname "$0")" && pwd)"
+here="$(cd "${1:-$tools}" && pwd)"
 chrome="${CHROME:-chromium}"
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
 shot() { # url out width height
@@ -19,7 +20,7 @@ for dir in "$here"/runs/*/; do
   [ -f "$dir/first-reply.html" ] && shot "file://$dir/first-reply.html" "$here/shots/$name-first.png" 1440 900
 
   # measured copy: same page with measure.js appended, in the same folder so relative paths hold
-  { cat "$dir/index.html"; echo "<script>"; cat "$here/measure.js"; echo "</script>"; } > "$dir/.measured.html"
+  { cat "$dir/index.html"; echo "<script>"; cat "$tools/measure.js"; echo "</script>"; } > "$dir/.measured.html"
   m="$("$chrome" --headless=new --no-sandbox --user-data-dir="$tmp/p" --window-size=1440,900 \
         --virtual-time-budget=4000 --dump-dom "file://$dir/.measured.html" 2>/dev/null |
       python3 -I -c 'import sys,re,html; print(html.unescape(re.search(r"data-metrics=\"([^\"]*)\"", sys.stdin.read()).group(1)))')"

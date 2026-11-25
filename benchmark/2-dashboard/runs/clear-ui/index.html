@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Loopdesk</title>
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+/* clear-ui tokens (subset of assets/tokens.css) */
+:root {
+  color-scheme: light;
+  --bg: #ffffff; --bg-subtle: #fafafa; --bg-soft: #f4f4f4; --bg-soft-hover: #ececec; --bg-raised: #ffffff;
+  --ink: #0d0d0d; --ink-hover: #303030; --ink-active: #414141; --on-ink: #ffffff;
+  --text: #0d0d0d; --text-2: #5d5d5d; --text-3: #6e6e6e;
+  --border: rgba(13, 13, 13, 0.08); --border-strong: rgba(13, 13, 13, 0.16); --focus: #0d0d0d;
+  --success: #15803d; --danger: #cf2a1e;
+  --data-neutral: #e4e4e4;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #111111; --bg-subtle: #161616; --bg-soft: #1f1f1f; --bg-soft-hover: #292929; --bg-raised: #1c1c1c;
+    --ink: #f2f2f2; --ink-hover: #d9d9d9; --ink-active: #c4c4c4; --on-ink: #0d0d0d;
+    --text: #f2f2f2; --text-2: #a3a3a3; --text-3: #8a8a8a;
+    --border: rgba(255, 255, 255, 0.09); --border-strong: rgba(255, 255, 255, 0.18); --focus: #f2f2f2;
+    --success: #4ade80; --danger: #f87171;
+    --data-neutral: #333333;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 14px/20px var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1, h2, p { margin: 0; }
+h1, h2 { font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; text-align: right; }
+.small { font-size: 13px; color: var(--text-2); }
+.up { color: var(--success); } .down { color: var(--danger); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: 10px; background: var(--ink); color: var(--on-ink); font: 500 14px/1 var(--font-sans); white-space: nowrap; text-decoration: none; cursor: pointer; transition: background-color 150ms var(--ease), transform 100ms var(--ease); }
+.btn:hover { background: var(--ink-hover); transition-duration: 0s, 100ms; }
+.btn:active { background: var(--ink-active); transform: scale(0.98); }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+.sidebar { display: flex; flex-direction: column; gap: 2px; padding: 12px; background: var(--bg-subtle); border-right: 1px solid var(--border); }
+.workspace { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; margin-bottom: 8px; font-weight: 500; }
+.nav-item { display: flex; align-items: center; height: 32px; padding: 0 8px; border-radius: 8px; color: var(--text-2); text-decoration: none; transition: background-color 150ms var(--ease); }
+.nav-item:hover { background: var(--bg-soft); color: var(--text); transition-duration: 0s; }
+.nav-item[aria-current="page"] { background: var(--bg-soft-hover); color: var(--text); font-weight: 500; }
+.topbar { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 24px; border-bottom: 1px solid var(--border); }
+.topbar h1 { margin-right: auto; }
+.content { display: grid; gap: 40px; max-width: 1008px; padding: 24px; }
+.head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.head > div { margin-right: auto; }
+.head p { margin-top: 4px; max-width: 70ch; color: var(--text-2); }
+
+/* Revenue */
+.revenue { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+.stat-value { margin-top: 4px; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.breakdown { margin: 16px 0 0; padding: 0; list-style: none; }
+.breakdown li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.breakdown li:last-child { border-bottom: 0; font-weight: 500; }
+.cols { display: flex; align-items: flex-end; gap: 12px; height: 200px; margin-top: 12px; border-bottom: 1px solid var(--border-strong); }
+.cols div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; height: 100%; font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.cols i { width: 100%; border-radius: 4px 4px 0 0; background: var(--data-neutral); }
+.cols .now { color: var(--text); font-weight: 500; }
+.cols .now i { background: var(--ink); }
+.axis { display: flex; gap: 12px; margin-top: 4px; font-size: 13px; color: var(--text-3); }
+.axis span { flex: 1; text-align: center; }
+.axis .now { color: var(--text); font-weight: 500; }
+
+/* Funnel: one bar per stage, width = share of the trials that started */
+.stage { display: grid; grid-template-columns: 184px minmax(0, 1fr) 40px 48px 208px; align-items: center; gap: 0 12px; padding: 4px 0; }
+.bar { height: 24px; min-width: 2px; border-radius: 6px; background: var(--data-neutral); }
+.bar.now { background: var(--ink); }
+.stage .lost { font-size: 13px; color: var(--text-3); }
+.stage .lost.down { color: var(--danger); }
+
+/* Cancellations */
+.card { border: 1px solid var(--border); border-radius: 16px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { height: 36px; padding: 0 12px; text-align: left; font-size: 13px; font-weight: 500; color: var(--text-2); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { height: 44px; padding: 0 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: var(--bg-subtle); }
+td .small { display: none; }
+.empty { padding: 64px 24px; text-align: center; color: var(--text-2); }
+
+.tabbar { display: none; }
+
+@media (max-width: 800px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .topbar { padding: 0 16px; }
+  .content { padding: 16px 16px 88px; }
+  .revenue { grid-template-columns: 1fr; gap: 24px; }
+  .cols { height: 160px; gap: 8px; } .axis { gap: 8px; }
+  .head { flex-direction: column; align-items: stretch; }
+  .btn { height: 48px; border-radius: 16px; font-size: 16px; }
+  /* stage name and numbers on one line, bar under them */
+  .stage { grid-template-columns: minmax(0, 1fr) 40px 48px; padding: 8px 0; }
+  .stage .bar-wrap { grid-row: 2; grid-column: 1 / -1; margin-top: 4px; }
+  .stage .lost { grid-row: 3; grid-column: 1 / -1; margin-top: 4px; }
+  /* table rows become two-line rows: plan, tenure, reason and date move under the name */
+  th:nth-child(n+2):nth-child(-n+5), td:nth-child(n+2):nth-child(-n+5) { display: none; }
+  td { height: auto; padding: 12px; white-space: normal; vertical-align: top; }
+  td .small { display: block; }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; height: 56px; background: var(--bg); border-top: 1px solid var(--border); }
+  .tabbar a { flex: 1; display: grid; place-items: center; font-size: 13px; color: var(--text-2); text-decoration: none; }
+  .tabbar a[aria-current="page"] { color: var(--text); font-weight: 500; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="sidebar" aria-label="Main">
+    <div class="workspace">Loopdesk</div>
+    <a class="nav-item" href="#" aria-current="page">Overview</a>
+    <a class="nav-item" href="#">Customers</a>
+    <a class="nav-item" href="#">Trials</a>
+    <a class="nav-item" href="#">Settings</a>
+  </nav>
+
+  <main>
+    <header class="topbar">
+      <h1>Overview</h1>
+      <span class="small" id="period"></span>
+    </header>
+    <div class="content">
+      <section class="revenue" aria-labelledby="mrr-label">
+        <div>
+          <div class="small" id="mrr-label">Monthly recurring revenue</div>
+          <div class="stat-value" id="mrr"></div>
+          <p id="mrr-change"></p>
+          <ul class="breakdown" id="breakdown"></ul>
+        </div>
+        <div>
+          <h2>Revenue over the last 6 months</h2>
+          <div class="cols" id="cols" role="img"></div>
+          <div class="axis" id="axis" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="funnel-title">
+        <div class="head"><div>
+          <h2 id="funnel-title">Where trials drop off</h2>
+          <p id="funnel-lead"></p>
+        </div></div>
+        <div id="funnel"></div>
+      </section>
+
+      <section aria-labelledby="cancel-title">
+        <div class="head">
+          <div>
+            <h2 id="cancel-title">Cancelled this month</h2>
+            <p id="cancel-lead"></p>
+          </div>
+          <a class="btn" id="email-all"></a>
+        </div>
+        <div class="card" id="cancelled"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<nav class="tabbar" aria-label="Main">
+  <a href="#" aria-current="page">Overview</a><a href="#">Customers</a><a href="#">Trials</a><a href="#">Settings</a>
+</nav>
+
+<script>
+// Sample data. Replace DATA with the billing provider's numbers; the page renders whatever is here.
+const DATA = {
+  period: '1 to 25 November 2026', month: 'November', lastMonth: 'October',
+  history: [['Jun', 14150], ['Jul', 14900], ['Aug', 15640], ['Sep', 16310], ['Oct', 17280], ['Nov', 18420]],
+  changes: [['9 new customers', 1460], ['4 upgrades', 520], ['2 downgrades', -130], ['6 cancellations', -710]],
+  funnel: [['Started a trial', 212], ['Connected an inbox', 148], ['Replied to a customer', 96], ['Added a card', 41], ['Paid first invoice', 34]],
+  cancelled: [
+    { name: 'Kestrel Logistics', email: 'ines.caldwell@kestrel-logistics.example', plan: 'Business', months: 19, date: '4 Nov', reason: 'Switched to Front', mrr: 225 },
+    { name: 'Brightside Dental Group', email: 'omar.haddad@brightsidedental.example', plan: 'Business', months: 8, date: '17 Nov', reason: 'Too expensive', mrr: 225 },
+    { name: 'Fennel Labs', email: 'priya.raman@fennellabs.example', plan: 'Team', months: 3, date: '9 Nov', reason: 'Not using it enough', mrr: 95 },
+    { name: 'Moreno & Park Studio', email: 'lucia@morenopark.example', plan: 'Team', months: 14, date: '21 Nov', reason: 'No reason given', mrr: 95 },
+    { name: 'Tidewater Coffee Roasters', email: 'ben@tidewatercoffee.example', plan: 'Starter', months: 2, date: '12 Nov', reason: 'Closed the business', mrr: 35 },
+    { name: 'Oakhurst Property Management', email: 'dana.whitlock@oakhurstpm.example', plan: 'Starter', months: 5, date: '23 Nov', reason: 'Missing a phone channel', mrr: 35 },
+  ],
+};
+
+const $ = id => document.getElementById(id);
+const usd = n => '$' + Math.abs(n).toLocaleString('en-US');
+const signed = n => (n < 0 ? '−' : '+') + usd(n);
+const pct = (a, b) => Math.round(a / b * 100) + '%';
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+const now = DATA.history.at(-1)[1], prev = DATA.history.at(-2)[1], change = now - prev;
+const lostMrr = DATA.cancelled.reduce((s, c) => s + c.mrr, 0);
+// The breakdown must add up to the headline, and the table to its line in the breakdown.
+console.assert(DATA.changes.reduce((s, c) => s + c[1], 0) === change, 'breakdown does not add up to the change');
+console.assert(-DATA.changes.at(-1)[1] === lostMrr, 'cancelled rows do not add up to the cancellations line');
+
+$('period').textContent = DATA.period;
+$('mrr').textContent = usd(now);
+$('mrr-change').innerHTML = `<span class="${change < 0 ? 'down' : 'up'}">${change < 0 ? 'Down' : 'Up'} ${usd(change)} (${(Math.abs(change) / prev * 100).toFixed(1)}%)</span> since the end of ${DATA.lastMonth}`;
+$('breakdown').innerHTML =
+  `<li><span>End of ${DATA.lastMonth}</span><span class="num">${usd(prev)}</span></li>` +
+  DATA.changes.map(([label, n]) => `<li><span>${label}</span><span class="num ${n < 0 ? 'down' : 'up'}">${signed(n)}</span></li>`).join('') +
+  `<li><span>${DATA.month} so far</span><span class="num">${usd(now)}</span></li>`;
+
+const max = Math.max(...DATA.history.map(h => h[1]));
+const cls = i => i === DATA.history.length - 1 ? ' class="now"' : '';
+$('cols').setAttribute('aria-label', DATA.history.map(([m, v]) => `${m} ${usd(v)}`).join(', '));
+$('cols').innerHTML = DATA.history.map(([m, v], i) => `<div${cls(i)} title="${m}: ${usd(v)}">$${(v / 1000).toFixed(1)}k<i style="height:${v / max * 80}%"></i></div>`).join('');
+$('axis').innerHTML = DATA.history.map(([m], i) => `<span${cls(i)}>${m}</span>`).join('');
+
+const f = DATA.funnel, started = f[0][1], paid = f.at(-1)[1];
+const drops = f.map(([, n], i) => i ? (f[i - 1][1] - n) / f[i - 1][1] : 0);
+const worst = drops.indexOf(Math.max(...drops));
+$('funnel-lead').textContent = `${started} trials started in ${DATA.lastMonth} and ${paid} became paying customers (${pct(paid, started)}). The biggest loss is at "${f[worst][0]}": ${f[worst - 1][1] - f[worst][1]} of the ${f[worst - 1][1]} who got that far stopped there.`;
+$('funnel').innerHTML = f.map(([name, n], i) => `
+  <div class="stage" title="${name}: ${n} of ${started}">
+    <span>${name}</span>
+    <div class="bar-wrap"><div class="bar${i === worst ? ' now' : ''}" style="width:${n / started * 100}%"></div></div>
+    <span class="num">${n}</span><span class="num small">${pct(n, started)}</span>
+    <span class="lost${i === worst ? ' down' : ''}">${i ? `${f[i - 1][1] - n} lost (${Math.round(drops[i] * 100)}%)${i === worst ? ', the biggest drop' : ''}` : ''}</span>
+  </div>`).join('');
+
+const c = DATA.cancelled, tenure = m => m + (m === 1 ? ' month' : ' months');
+if (!c.length) {
+  $('cancel-lead').textContent = '';
+  $('email-all').remove();
+  $('cancelled').innerHTML = '<p class="empty">No cancellations this month.</p>';
+} else {
+  $('cancel-lead').textContent = `${c.length} customers, ${usd(lostMrr)} of monthly revenue.`;
+  $('email-all').textContent = `Email all ${c.length}`;
+  $('email-all').href = 'mailto:?bcc=' + c.map(x => x.email).join(',') + '&subject=' + encodeURIComponent('Sorry to see you go');
+  $('cancelled').innerHTML = `<table>
+    <thead><tr><th>Customer</th><th>Plan</th><th>Customer for</th><th>Cancelled</th><th>Reason</th><th class="num">MRR lost</th></tr></thead>
+    <tbody>${c.map(x => `<tr><td>${esc(x.name)}<div class="small">${x.plan}, ${tenure(x.months)}. ${x.reason}, ${x.date}</div></td><td>${x.plan}</td><td>${tenure(x.months)}</td><td>${x.date}</td><td>${x.reason}</td><td class="num">${usd(x.mrr)}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+</script>
+</body>
+</html>

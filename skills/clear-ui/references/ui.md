@@ -81,10 +81,11 @@ comes with a word or icon, since colour alone is invisible to some users.
 ### Data colours
 
 A chart is grey by default: marks in `--data-neutral`, and the one mark the user should look at
-(today, the current period, the selected row) in `--ink`. That covers any chart with one series.
+(today, the current period, the selected row) in `--ink`. That covers any chart with one series, including a
+funnel, where the ink mark is the stage with the biggest loss.
 
 When marks belong to different categories and the user has to tell them apart, such as projects on
-a timeline or stages in a funnel, use the five tints, in this order:
+a timeline, use the five tints, in this order:
 
 | Token | Light | Reads as |
 |---|---|---|
@@ -437,7 +438,8 @@ reference products do them. Leave them out unless the user asks for one by name.
 
 Look at a screenshot of the result, at desktop and phone width, in light and dark.
 
-1. Is there exactly one filled button on the screen, and is it the thing the user most likely wants?
+1. Is there at most one filled button on the screen, and is it the thing the user most likely wants?
+   A screen that is only read, such as a dashboard, has none: do not invent an action to fill the slot.
 2. Covering every status colour and chart mark, is the screen only black, white and grey?
 3. Do static surfaces have borders without shadows, and floating ones shadows without borders?
 4. Are there four text sizes or fewer, weights 400/500/600 only, no uppercase labels?

@@ -104,6 +104,12 @@ One prompt was given to three agents, each following a different skill (`fronten
 |---|---|---|
 | ![](benchmark/shots/frontend-design-final.png) | ![](benchmark/shots/ui-ux-pro-max-final.png) | ![](benchmark/shots/clear-ui-final.png) |
 
+A second run on a dashboard prompt, with version 1.1.0: [benchmark/2-dashboard/](benchmark/2-dashboard/README.md).
+
+| `frontend-design` | `ui-ux-pro-max` | `clear-ui` |
+|---|---|---|
+| ![](benchmark/2-dashboard/shots/frontend-design-final.png) | ![](benchmark/2-dashboard/shots/ui-ux-pro-max-final.png) | ![](benchmark/2-dashboard/shots/clear-ui-final.png) |
+
 ## Where it comes from
 
 The rules were derived in November 2026 from the public pages, shipped CSS, documentation and

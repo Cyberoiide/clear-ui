@@ -308,8 +308,9 @@ already know how they work.
 - **Guided flow:** one question per screen, answers as large tappable options, named stages, back
   always available, the effort announced at the start and a summary before the final commit.
 - **Result with breakdown:** the outcome in one line, then the parts that add up to it.
-- **Dashboard:** at most three numbers the user came for, then one chart that answers the main
-  question, then the rows behind it. Each chart has a sentence-case title that names what it
+- **Dashboard:** at most three numbers the user came for, then one chart per question the user
+  asked, in the order they asked, then the rows behind them. A dashboard that is only read has no
+  primary action. Each chart has a sentence-case title that names what it
   shows, and its own period control only if it differs from the page's.
 - **Empty state:** what this place is for and one button to create the first item.
 - **Settings:** a left list of sections and a narrow single-column list of settings that apply

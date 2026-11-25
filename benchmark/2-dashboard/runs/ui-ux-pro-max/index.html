@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscription dashboard · November 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-primary:#2563EB; --color-on-primary:#FFFFFF;
+  --color-accent:#EA580C; --color-accent-text:#C2410C; --color-accent-soft:#FFF1E8;
+  --color-background:#F8FAFC; --color-foreground:#1E293B;
+  --color-card:#FFFFFF; --color-muted:#E9EFF8; --color-muted-foreground:#475569;
+  --color-border:#E2E8F0; --color-grid:#E2E8F0;
+  --color-positive:#15803D; --color-destructive:#B91C1C;
+  --color-ring:#2563EB;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
+  --radius:8px;
+  --font-sans:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"Fira Code",ui-monospace,"SF Mono",Menlo,monospace;
+  --dur-fast:150ms;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-background);color:var(--color-foreground);
+  font:16px/1.5 var(--font-sans)}
+h1,h2,h3,p{margin:0}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--color-muted-foreground)}
+.up{color:var(--color-positive)} .down{color:var(--color-destructive)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:var(--space-2);top:-48px;background:var(--color-primary);color:var(--color-on-primary);
+  padding:var(--space-2) var(--space-4);border-radius:var(--radius);z-index:100}
+.skip:focus{top:var(--space-2)}
+:focus-visible{outline:3px solid var(--color-ring);outline-offset:2px;border-radius:4px}
+
+header{background:var(--color-card);border-bottom:1px solid var(--color-border)}
+.bar,main{max-width:1360px;margin:0 auto;padding:var(--space-3) var(--space-4)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);justify-content:space-between}
+.brand{display:flex;align-items:center;gap:var(--space-2);font-weight:600}
+.brand svg{color:var(--color-primary)}
+h1{font-size:20px;line-height:1.3;font-weight:600}
+.period{font-size:14px}
+.btn{font:500 14px var(--font-sans);min-height:44px;padding:0 var(--space-4);border-radius:var(--radius);
+  border:1px solid var(--color-border);background:var(--color-card);color:var(--color-foreground);
+  cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-2);touch-action:manipulation;
+  transition:background var(--dur-fast) ease-out,border-color var(--dur-fast) ease-out}
+.btn:hover{background:var(--color-muted);border-color:#CBD5E1}
+.btn:active{background:#DCE5F2}
+
+main{display:grid;gap:var(--space-3);grid-template-columns:minmax(0,1fr);padding-bottom:var(--space-8)}
+.card{background:var(--color-card);border:1px solid var(--color-border);border-radius:var(--radius);
+  padding:var(--space-4);min-width:0}
+.card h2{font-size:16px;font-weight:600}
+.card .sub{font-size:14px;color:var(--color-muted-foreground)}
+.head{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-4);justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-3)}
+
+.kpis{display:grid;gap:var(--space-3);grid-template-columns:repeat(2,minmax(0,1fr))}
+.kpi .label{font-size:14px;color:var(--color-muted-foreground);font-weight:500}
+.kpi .value{font:600 24px/1.25 var(--font-mono);font-variant-numeric:tabular-nums;margin:var(--space-1) 0}
+.kpi .note{font-size:14px}
+.kpi:last-child{grid-column:1/-1}
+.kpi.primary{grid-column:1/-1;border-left:4px solid var(--color-primary)}
+.kpi.primary .value{font-size:36px}
+.delta{font-weight:600;white-space:nowrap}
+
+/* MRR chart */
+#chart{position:relative}
+#chart svg{display:block;width:100%;height:260px;touch-action:pan-y;cursor:crosshair}
+#chart text{font:12px var(--font-sans);fill:var(--color-muted-foreground)}
+#tip{position:absolute;top:0;left:0;pointer-events:none;background:var(--color-foreground);color:#fff;
+  font-size:13px;line-height:1.4;padding:6px 10px;border-radius:6px;white-space:nowrap;
+  opacity:0;transition:opacity var(--dur-fast) ease-out}
+#tip.on{opacity:1}
+details{margin-top:var(--space-2);font-size:14px}
+summary{cursor:pointer;color:var(--color-primary);font-weight:500;min-height:44px;display:inline-flex;align-items:center}
+.mini{border-collapse:collapse;font-size:14px}
+.mini th,.mini td{padding:4px 16px 4px 0;text-align:left}
+.mini td{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* MRR movement */
+.moves{list-style:none;margin:0;padding:0;display:grid;gap:var(--space-3)}
+.moves li{display:grid;grid-template-columns:1fr auto;gap:2px var(--space-3);font-size:14px}
+.track{grid-column:1/-1;height:8px;background:var(--color-muted);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:4px}
+.moves .total{border-top:1px solid var(--color-border);padding-top:var(--space-3);font-weight:600;font-size:16px}
+
+/* Funnel */
+.funnel{list-style:none;margin:0;padding:0}
+.stage{display:grid;grid-template-columns:1fr auto;gap:2px var(--space-3);align-items:baseline}
+.stage .name{font-weight:500;font-size:14px}
+.stage .count{font-size:14px}
+.stage .fbar{grid-column:1/-1;height:20px;background:var(--color-muted);border-radius:4px;overflow:hidden}
+.stage .fbar i{display:block;height:100%;background:var(--color-primary);border-radius:4px}
+.drop{font-size:13px;color:var(--color-muted-foreground);padding:6px 0 6px var(--space-3);
+  margin:2px 0 2px var(--space-2);border-left:2px dashed #CBD5E1}
+.drop.worst{color:var(--color-accent-text);border-left:2px solid var(--color-accent);
+  background:var(--color-accent-soft);font-weight:600;border-radius:0 4px 4px 0}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;
+  background:var(--color-accent);color:#000;margin-left:var(--space-2);white-space:nowrap}
+.callout{margin-top:var(--space-3);font-size:14px;padding:var(--space-3);background:var(--color-muted);border-radius:6px}
+
+/* Cancellations: cards on mobile, table from 768px */
+.sortpick{display:flex;align-items:center;gap:var(--space-2);font-size:14px}
+.sortpick select{font:inherit;min-height:44px;padding:0 var(--space-2);border:1px solid var(--color-border);
+  border-radius:var(--radius);background:var(--color-card);color:inherit;cursor:pointer}
+table.cx{width:100%;border-collapse:collapse;font-size:14px}
+.cx thead{display:none}
+.cx tr{display:block;padding:var(--space-3) 0;border-top:1px solid var(--color-border)}
+.cx td{display:flex;justify-content:space-between;gap:var(--space-4);padding:2px 0;text-align:right}
+.cx td::before{content:attr(data-label);color:var(--color-muted-foreground);text-align:left;flex:none}
+.cx td:first-child{font-weight:600;font-size:16px;text-align:left}
+.cx td:first-child::before{content:none}
+.empty{padding:var(--space-6) 0;text-align:center;color:var(--color-muted-foreground)}
+
+@media (min-width:768px){
+  body{font-size:14px}
+  .bar,main{padding-left:var(--space-6);padding-right:var(--space-6)}
+  .kpis{grid-template-columns:1.4fr 1fr 1fr 1fr}
+  .kpi.primary,.kpi:last-child{grid-column:auto}
+  .kpi.primary .value{font-size:32px}
+  .sortpick{display:none}
+  .cx thead{display:table-header-group}
+  .cx tr{display:table-row;padding:0}
+  .cx td{display:table-cell;padding:10px var(--space-3);text-align:left;border-top:1px solid var(--color-border);vertical-align:top}
+  .cx td::before{content:none}
+  .cx td:first-child{font-size:14px}
+  .cx th{text-align:left;padding:0;font-weight:500;white-space:nowrap}
+  .cx th button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:100%;
+    min-height:40px;padding:0 var(--space-3);cursor:pointer;color:var(--color-muted-foreground);font-size:13px;
+    transition:color var(--dur-fast) ease-out}
+  .cx th button:hover,.cx th[aria-sort] button{color:var(--color-foreground)}
+  .cx th button:focus-visible{outline:3px solid var(--color-ring);outline-offset:-3px;border-radius:4px}
+  .cx th svg{opacity:.35}
+  .cx th[aria-sort] svg{opacity:1}
+  .cx th[aria-sort=ascending] svg{transform:rotate(180deg)}
+  .cx .r,.cx th.r button{text-align:right;justify-content:flex-end}
+  .cx tbody tr:hover td{background:var(--color-background)}
+}
+@media (min-width:1100px){
+  main{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .kpis{grid-column:1/-1}
+  .c8{grid-column:span 8} .c4{grid-column:span 4} .c5{grid-column:span 5} .c7{grid-column:span 7}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to dashboard</a>
+<header>
+  <div class="bar">
+    <div>
+      <div class="brand">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>
+        <span>Ledgerline</span>
+      </div>
+      <h1>Subscriptions, November 2026</h1>
+      <p class="period muted">Nov 1–25, compared with the end of October. All amounts in USD.</p>
+    </div>
+    <button class="btn" id="export" type="button">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Export cancellations (CSV)
+    </button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <section class="kpis" aria-label="Key numbers this month" id="kpis"></section>
+
+  <section class="card c8" aria-labelledby="h-mrr">
+    <div class="head">
+      <div><h2 id="h-mrr">Monthly recurring revenue</h2><p class="sub">Last 12 months, one point per month</p></div>
+    </div>
+    <div id="chart"><div id="tip" role="status"></div></div>
+    <details><summary>Show the 12 months as a table</summary><div id="mrrTable"></div></details>
+  </section>
+
+  <section class="card c4" aria-labelledby="h-move">
+    <div class="head"><div><h2 id="h-move">What moved MRR this month</h2><p class="sub">October $<span id="prevMrr"></span> to November</p></div></div>
+    <ul class="moves" id="moves"></ul>
+  </section>
+
+  <section class="card c5" aria-labelledby="h-funnel">
+    <div class="head"><div><h2 id="h-funnel">Where trials drop off</h2><p class="sub">14-day trials that ended in November</p></div></div>
+    <ol class="funnel" id="funnel"></ol>
+    <p class="callout" id="funnelNote"></p>
+  </section>
+
+  <section class="card c7" aria-labelledby="h-cx">
+    <div class="head">
+      <div><h2 id="h-cx">Customers who cancelled this month</h2><p class="sub" id="cxSub"></p></div>
+      <label class="sortpick">Sort by <select id="sortSel"></select></label>
+    </div>
+    <table class="cx">
+      <thead><tr id="cxHead"></tr></thead>
+      <tbody id="cxBody"></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+// ---------- sample data ----------
+const MONTHS = ['Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026'];
+const MRR = [11240,11890,12310,12980,13640,14120,14050,14870,15630,16480,17310,18420];
+const CANCELLED = [
+  {name:'Brightloop Studio',   plan:'Scale',   mrr:199, months:26, date:'2026-11-21', reason:'Switched to a competitor'},
+  {name:'Northwind Logistics', plan:'Growth',  mrr:158, months:14, date:'2026-11-18', reason:'Too expensive'},
+  {name:'Kestrel Health',      plan:'Growth',  mrr:99,  months:9,  date:'2026-11-12', reason:'Missing feature: cohort export'},
+  {name:'Paper Crane Co.',     plan:'Growth',  mrr:79,  months:3,  date:'2026-11-06', reason:'Company shut down'},
+  {name:'Juniper & Finch',     plan:'Starter', mrr:58,  months:5,  date:'2026-11-19', reason:'Payment failed, card expired'},
+  {name:'Tidewater Apps',      plan:'Starter', mrr:49,  months:2,  date:'2026-11-03', reason:'No longer needed'},
+  {name:'Solo Ledger',         plan:'Starter', mrr:48,  months:1,  date:'2026-11-14', reason:'Too expensive'}
+];
+const churned = CANCELLED.reduce((s,c)=>s+c.mrr,0);
+const MOVES = [
+  {label:'New customers', v:1490, n:'16 customers'},
+  {label:'Upgrades',      v:520,  n:'11 customers'},
+  {label:'Downgrades',    v:-210, n:'4 customers'},
+  {label:'Cancellations', v:-churned, n:CANCELLED.length+' customers'}
+];
+const FUNNEL = [
+  {name:'Started a trial', n:96},
+  {name:'Connected billing data', n:71},
+  {name:'Built a first report', n:34},
+  {name:'Added a card', n:22},
+  {name:'Paid first invoice', n:16}
+];
+const SUBS = {now:214, prev:205}, CONV_PREV = 14.9, CX_PREV = 5;
+
+// ---------- helpers ----------
+const usd = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+const signed = v => (v<0?'−':'+') + usd.format(Math.abs(v));
+const pct = (v,d=1) => v.toFixed(d)+'%';
+const day = new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ARROW = up => `<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="${up?'M12 19V5M5 12l7-7 7 7':'M12 5v14M5 12l7 7 7-7'}"/></svg>`;
+
+const cur = MRR.at(-1), prev = MRR.at(-2), net = cur - prev;
+// self-check: the movement lines must add up to the change in MRR
+console.assert(MOVES.reduce((s,m)=>s+m.v,0) === net, 'MRR movement does not reconcile');
+
+// ---------- KPIs ----------
+const conv = FUNNEL.at(-1).n / FUNNEL[0].n * 100;
+$('kpis').innerHTML = `
+  <div class="card kpi primary"><div class="label">MRR this month</div>
+    <div class="value">${usd.format(cur)}</div>
+    <div class="note"><span class="delta ${net>=0?'up':'down'}">${ARROW(net>=0)} ${signed(net)} (${pct(net/prev*100)})</span> <span class="muted">vs October</span></div></div>
+  <div class="card kpi"><div class="label">Paying customers</div>
+    <div class="value">${SUBS.now}</div>
+    <div class="note"><span class="delta up">${ARROW(true)} +${SUBS.now-SUBS.prev}</span> <span class="muted">net, 16 new</span></div></div>
+  <div class="card kpi"><div class="label">Trials that paid</div>
+    <div class="value">${pct(conv)}</div>
+    <div class="note"><span class="delta up">${ARROW(true)} +${(conv-CONV_PREV).toFixed(1)} pts</span> <span class="muted">vs October</span></div></div>
+  <div class="card kpi"><div class="label">Cancelled</div>
+    <div class="value">${CANCELLED.length} <span style="font-size:14px;font-weight:500" class="muted">customers</span></div>
+    <div class="note"><span class="delta down">${ARROW(false)} ${signed(-churned)} MRR</span> <span class="muted">${CX_PREV} in October</span></div></div>`;
+
+// ---------- MRR movement ----------
+$('prevMrr').textContent = prev.toLocaleString('en-US');
+const maxMove = Math.max(...MOVES.map(m=>Math.abs(m.v)));
+$('moves').innerHTML = MOVES.map(m=>`
+  <li><span>${m.label} <span class="muted">· ${m.n}</span></span>
+    <span class="num delta ${m.v>=0?'up':'down'}">${signed(m.v)}</span>
+    <span class="track"><i style="width:${Math.abs(m.v)/maxMove*100}%;background:var(${m.v>=0?'--color-positive':'--color-destructive'})"></i></span></li>`).join('') +
+  `<li class="total"><span>Net change</span><span class="num ${net>=0?'up':'down'}">${signed(net)}</span></li>`;
+
+// ---------- MRR chart (inline SVG, redrawn to the real pixel width) ----------
+const chart = $('chart'), tip = $('tip');
+let active = MRR.length-1, pts = [];
+function drawChart(){
+  const W = chart.clientWidth, H = 260, m = {l:48,r:16,t:16,b:28};
+  const lo = 10000, hi = 20000, step = W < 520 ? 3 : W < 760 ? 2 : 1;
+  const x = i => m.l + i*(W-m.l-m.r)/(MRR.length-1);
+  const y = v => m.t + (hi-v)*(H-m.t-m.b)/(hi-lo);
+  pts = MRR.map((v,i)=>[x(i),y(v)]);
+  let g = '';
+  for(let v=lo; v<=hi; v+=2500) g += `<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--color-grid)"/><text x="${m.l-8}" y="${y(v)+4}" text-anchor="end">$${v/1000}k</text>`;
+  MONTHS.forEach((mo,i)=>{ if((MONTHS.length-1-i)%step===0) g += `<text x="${x(i)}" y="${H-6}" text-anchor="${i===MONTHS.length-1?'end':'middle'}">${mo.slice(0,3)}${i===0||mo.startsWith('Jan')?" '"+mo.slice(-2):''}</text>`; });
+  const line = pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const [ax,ay] = pts[active];
+  chart.querySelector('svg')?.remove();
+  chart.insertAdjacentHTML('afterbegin', `<svg tabindex="0" role="img" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+    aria-label="Line chart. MRR grew from ${usd.format(MRR[0])} in ${MONTHS[0]} to ${usd.format(cur)} in ${MONTHS.at(-1)}, with one small dip in June 2026. Use left and right arrow keys to read each month.">
+    ${g}
+    <path d="${line} L${pts.at(-1)[0]} ${H-m.b} L${pts[0][0]} ${H-m.b} Z" fill="var(--color-primary)" opacity=".1"/>
+    <path d="${line}" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="${ax}" x2="${ax}" y1="${m.t}" y2="${H-m.b}" stroke="var(--color-muted-foreground)" stroke-dasharray="3 3"/>
+    <circle cx="${ax}" cy="${ay}" r="5" fill="var(--color-card)" stroke="var(--color-primary)" stroke-width="2.5"/>
+  </svg>`);
+  const svg = chart.querySelector('svg');
+  const nearest = e => { const r = svg.getBoundingClientRect(), px = e.clientX - r.left;
+    return pts.reduce((b,p,i)=>Math.abs(p[0]-px) < Math.abs(pts[b][0]-px) ? i : b, 0); };
+  svg.onpointermove = svg.onpointerdown = e => setActive(nearest(e), true);
+  svg.onpointerleave = () => tip.classList.remove('on');
+  svg.onfocus = () => showTip();
+  svg.onblur = () => tip.classList.remove('on');
+  svg.onkeydown = e => { const d = {ArrowLeft:-1,ArrowRight:1}[e.key]; if(!d) return;
+    e.preventDefault(); setActive(Math.max(0,Math.min(MRR.length-1,active+d)), true); };
+}
+function setActive(i, refocus){
+  if(i !== active){ const had = document.activeElement === chart.querySelector('svg'); active = i; drawChart(); if(refocus && had) chart.querySelector('svg').focus(); }
+  showTip();
+}
+function showTip(){
+  const d = active ? MRR[active]-MRR[active-1] : null, [px,py] = pts[active];
+  tip.innerHTML = `<strong>${MONTHS[active]}</strong> · ${usd.format(MRR[active])}` + (d===null ? '' : `<br>${signed(d)} vs previous month`);
+  tip.classList.add('on');
+  const w = tip.offsetWidth, left = Math.max(0, Math.min(chart.clientWidth-w, px - w/2));
+  tip.style.transform = `translate(${left}px,${Math.max(0, py-58)}px)`;
+}
+drawChart();
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { tip.classList.remove('on'); drawChart(); }, 100); });
+$('mrrTable').innerHTML = '<table class="mini"><thead><tr><th scope="col">Month</th><th scope="col">MRR</th><th scope="col">Change</th></tr></thead><tbody>' +
+  MONTHS.map((mo,i)=>`<tr><th scope="row" style="font-weight:400">${mo}</th><td>${usd.format(MRR[i])}</td><td>${i?signed(MRR[i]-MRR[i-1]):'n/a'}</td></tr>`).join('') + '</tbody></table>';
+
+// ---------- funnel ----------
+const drops = FUNNEL.slice(1).map((s,i)=>FUNNEL[i].n - s.n), worst = drops.indexOf(Math.max(...drops));
+$('funnel').innerHTML = FUNNEL.map((s,i)=>{
+  const lost = drops[i-1];
+  return (i ? `<li class="drop${i-1===worst?' worst':''}">${ARROW(false)} <span class="num">${lost}</span> left here (${pct(lost/FUNNEL[i-1].n*100,0)} of the previous step)${i-1===worst?'<span class="badge">Biggest drop</span>':''}</li>` : '') +
+    `<li class="stage"><span class="name">${i+1}. ${s.name}</span>
+      <span class="count"><span class="num"><strong>${s.n}</strong></span> <span class="muted">· ${pct(s.n/FUNNEL[0].n*100,0)} of trials</span></span>
+      <span class="fbar" aria-hidden="true"><i style="width:${s.n/FUNNEL[0].n*100}%;opacity:${1-i*.13}"></i></span></li>`;
+}).join('');
+$('funnelNote').innerHTML = `<strong>${drops[worst]} of ${FUNNEL[worst].n} trials</strong> stopped between “${FUNNEL[worst].name}” and “${FUNNEL[worst+1].name}”. That step loses more people than all the others combined after it. ${FUNNEL.at(-1).n} of ${FUNNEL[0].n} trials ended up paying (${pct(conv)}).`;
+
+// ---------- cancellations (sortable) ----------
+const COLS = [
+  {k:'name',   label:'Customer',     fmt:c=>esc(c.name)},
+  {k:'plan',   label:'Plan',         fmt:c=>c.plan},
+  {k:'mrr',    label:'MRR lost',     fmt:c=>`<span class="num down">${signed(-c.mrr)}</span>`, r:1},
+  {k:'months', label:'Customer for', fmt:c=>`<span><span class="num">${c.months}</span> ${c.months===1?'month':'months'}</span>`, r:1},
+  {k:'date',   label:'Cancelled',    fmt:c=>day.format(new Date(c.date))},
+  {k:'reason', label:'Reason given', fmt:c=>esc(c.reason)}
+];
+let sort = {k:'mrr', dir:-1};
+const CHEV = '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+function renderCx(){
+  const rows = [...CANCELLED].sort((a,b)=> (a[sort.k] > b[sort.k] ? 1 : a[sort.k] < b[sort.k] ? -1 : 0) * sort.dir);
+  $('cxHead').innerHTML = COLS.map(c=>`<th scope="col" class="${c.r?'r':''}" ${c.k===sort.k?`aria-sort="${sort.dir>0?'ascending':'descending'}"`:''}><button type="button" data-k="${c.k}">${c.label}${CHEV}</button></th>`).join('');
+  $('cxBody').innerHTML = rows.length ? rows.map(r=>'<tr>'+COLS.map(c=>`<td data-label="${c.label}" class="${c.r?'r':''}">${c.fmt(r)}</td>`).join('')+'</tr>').join('')
+    : '<tr><td colspan="6" class="empty">No cancellations so far this month.</td></tr>';
+  $('sortSel').value = sort.k;
+}
+function sortBy(k){
+  sort = {k, dir: k===sort.k ? -sort.dir : (typeof CANCELLED[0][k]==='number' || k==='date' ? -1 : 1)};
+  renderCx();
+}
+$('sortSel').innerHTML = COLS.map(c=>`<option value="${c.k}">${c.label}</option>`).join('');
+$('sortSel').onchange = e => sortBy(e.target.value);
+$('cxHead').onclick = e => { const b = e.target.closest('button'); if(!b) return; sortBy(b.dataset.k); $('cxHead').querySelector(`[data-k="${b.dataset.k}"]`).focus(); };
+$('cxSub').textContent = `${CANCELLED.length} customers, ${usd.format(churned)} of monthly revenue. ${(CANCELLED.length/SUBS.prev*100).toFixed(1)}% of the ${SUBS.prev} you had on Nov 1.`;
+renderCx();
+
+$('export').onclick = () => {
+  const q = s => '"'+String(s).replace(/"/g,'""')+'"';
+  const csv = ['Customer,Plan,MRR lost (USD),Months as customer,Cancelled,Reason', ...CANCELLED.map(c=>[c.name,c.plan,c.mrr,c.months,c.date,c.reason].map(q).join(','))].join('\n');
+  const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})), download:'cancellations-2026-11.csv'});
+  a.click(); URL.revokeObjectURL(a.href);
+};
+</script>
+</body>
+</html>

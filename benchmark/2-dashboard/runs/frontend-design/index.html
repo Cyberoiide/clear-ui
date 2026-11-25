@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview, November 2026 | Keel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --spruce: #10332C;
+  --chalk: #F1F4EE;
+  --mint: #9BE0BF;
+  --rose: #F4A3B8;
+  --berry: #A3214C;
+  --marigold: #F5C542;
+  --rule: #C9D2C8;
+  --soft: #4C635D;          /* secondary text on chalk */
+  --soft-dark: #B5C9C1;     /* secondary text on spruce */
+  --pad: clamp(20px, 4vw, 56px);
+  --side: 300px;            /* heading column shared by every section */
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--chalk);
+  color: var(--spruce);
+  font: 400 16px/1.5 "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+h1, h2, p, ol, dl, dd { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; border-radius: 2px; }
+
+/* ---------- top band: navigation + revenue ---------- */
+.band { background: var(--spruce); color: var(--chalk); padding: 0 var(--pad) 56px; }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 32px; padding: 22px 0; }
+.brand { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+.top nav { display: flex; gap: 24px; font-size: 15px; }
+.top nav a { text-decoration: none; color: var(--soft-dark); padding-bottom: 3px; }
+.top nav a:hover { color: var(--chalk); }
+.top nav a[aria-current] { color: var(--chalk); border-bottom: 2px solid var(--marigold); }
+.period { margin-left: auto; font-size: 15px; color: var(--soft-dark); }
+
+.revenue { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: end; padding-top: 40px; }
+.revenue h1 {
+  font-size: clamp(34px, 4.4vw, 62px); line-height: 1.04; font-weight: 600;
+  letter-spacing: -0.03em; font-stretch: 82%; max-width: 13em; text-wrap: balance;
+}
+.revenue .sub { margin-top: 20px; color: var(--soft-dark); max-width: 34em; }
+
+/* the bridge: each bar floats from --lo, sized --size (both 0..1 of the plot) */
+.bridge { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 14px; }
+.bridge li { display: flex; flex-direction: column; }
+.plot { position: relative; height: 210px; border-bottom: 1px solid var(--soft-dark); }
+.bar {
+  position: absolute; left: 0; right: 0;
+  bottom: calc(var(--lo) * 100%); height: calc(var(--size) * 100%);
+  background: var(--mint); transform-origin: bottom;
+  animation: grow .5s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .16s);
+}
+.loss .bar { background: var(--rose); transform-origin: top; }
+.net .bar { background: var(--marigold); }
+@keyframes grow { from { transform: scaleY(0); } }
+.amount { margin-top: 12px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.term { font-size: 15px; }
+.who { font-size: 13px; color: var(--soft-dark); }
+.baseline-note { grid-column: 1 / -1; font-size: 13px; color: var(--soft-dark); margin-top: 14px; }
+
+/* ---------- sections on chalk ---------- */
+.section { display: grid; grid-template-columns: var(--side) minmax(0, 1fr); gap: 24px 48px; padding: 56px var(--pad); }
+.section + .section { border-top: 1px solid var(--rule); }
+.section h2 { font-size: 30px; line-height: 1.12; font-weight: 600; letter-spacing: -0.02em; font-stretch: 86%; }
+.section .lede { margin-top: 12px; color: var(--soft); max-width: 30em; }
+
+/* funnel */
+.funnel { list-style: none; padding: 0; }
+.step { display: grid; grid-template-columns: 210px minmax(0, 1fr) 72px; gap: 16px; align-items: center; }
+.step .name { font-size: 16px; }
+.track { height: 34px; background: repeating-linear-gradient(135deg, transparent 0 5px, var(--rule) 5px 6px); }
+.track i { display: block; height: 100%; width: calc(var(--w) * 100%); background: var(--spruce); }
+.step .count { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; text-align: right; }
+.drop { margin: 6px 0 6px 226px; font-size: 14px; color: var(--soft); padding: 3px 0; }
+.drop.worst { color: var(--spruce); font-weight: 600; }
+.drop.worst span { background: var(--marigold); padding: 3px 8px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.funnel-foot { margin: 22px 0 0 226px; font-size: 14px; color: var(--soft); max-width: 44em; }
+
+/* cancellations */
+.sort { display: flex; gap: 6px; margin-top: 20px; font-size: 14px; align-items: center; flex-wrap: wrap; }
+.sort button {
+  font: inherit; color: var(--spruce); background: none; border: 1px solid var(--rule);
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.sort button[aria-pressed="true"] { background: var(--spruce); color: var(--chalk); border-color: var(--spruce); }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-weight: 400; font-size: 14px; color: var(--soft); padding: 0 16px 10px 0; border-bottom: 1px solid var(--spruce); white-space: nowrap; }
+td { padding: 13px 16px 13px 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+th.num, td.num { text-align: right; }
+th:last-child, td:last-child { padding-right: 0; }
+td.customer { font-weight: 600; }
+td.lost { color: var(--berry); font-weight: 600; white-space: nowrap; }
+td.when, td.tenure { white-space: nowrap; }
+tfoot td { border-bottom: 0; font-weight: 600; padding-top: 16px; }
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 1020px) {
+  .revenue, .section { grid-template-columns: minmax(0, 1fr); }
+  .revenue { align-items: start; gap: 36px; }
+}
+@media (max-width: 640px) {
+  .period { margin-left: 0; width: 100%; }
+  .top nav { gap: 18px; }
+  .band { padding-bottom: 40px; }
+  .section { padding-top: 40px; padding-bottom: 40px; }
+  .section h2 { font-size: 26px; }
+
+  /* bridge turns on its side: same --lo / --size, read left to right */
+  .bridge { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .bridge li { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: baseline; }
+  .plot { grid-column: 1 / -1; grid-row: 3; height: 16px; border-bottom: 0; border-left: 1px solid var(--soft-dark); margin-top: 6px; }
+  .bar { top: 0; bottom: 0; height: auto; left: calc(var(--lo) * 100%); right: auto; width: calc(var(--size) * 100%); transform-origin: left; }
+  .loss .bar { transform-origin: right; }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .term { grid-column: 1; grid-row: 1; font-size: 16px; }
+  .amount { grid-column: 2; grid-row: 1; margin: 0; font-size: 18px; }
+  .who { grid-column: 1 / -1; grid-row: 2; }
+
+  .step { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+  .step .name { grid-row: 1; }
+  .step .count { grid-row: 1; font-size: 18px; }
+  .track { grid-row: 2; grid-column: 1 / -1; height: 22px; }
+  .drop, .funnel-foot { margin-left: 0; }
+
+  /* table rows become stacked entries */
+  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  tbody tr:first-child { border-top: 1px solid var(--spruce); }
+  tbody td { display: block; padding: 0; border: 0; font-size: 14px; color: var(--soft); text-align: left; }
+  tbody td.customer { grid-column: 1; font-size: 16px; color: var(--spruce); }
+  tbody td.lost { grid-column: 2; grid-row: 1; font-size: 16px; color: var(--berry); text-align: right; }
+  tbody td.reason { grid-column: 1 / -1; color: var(--spruce); font-size: 15px; }
+  tbody td.plan, tbody td.tenure, tbody td.when { grid-column: 1 / -1; }
+  tbody td.tenure::before { content: "Customer for "; }
+  tbody td.when::before { content: "Left on "; }
+  tfoot tr { display: flex; justify-content: space-between; }
+  tfoot td { padding: 16px 0 0; }
+  tfoot td:empty { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .bar { animation: none; } }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="top">
+    <span class="brand">Keel</span>
+    <nav aria-label="Main">
+      <a href="#" aria-current="page">Overview</a>
+      <a href="#">Customers</a>
+      <a href="#">Trials</a>
+      <a href="#">Settings</a>
+    </nav>
+    <span class="period">Loomwork, 1 to 25 November 2026</span>
+  </div>
+
+  <section class="revenue" aria-labelledby="rev-h">
+    <div>
+      <h1 id="rev-h"></h1>
+      <p class="sub" id="rev-sub"></p>
+    </div>
+    <ol class="bridge" id="bridge" aria-label="What moved recurring revenue since October"></ol>
+  </section>
+</header>
+
+<main>
+  <section class="section" aria-labelledby="trial-h">
+    <div>
+      <h2 id="trial-h">Where trials stop</h2>
+      <p class="lede" id="trial-lede"></p>
+    </div>
+    <div>
+      <ol class="funnel" id="funnel"></ol>
+      <p class="funnel-foot">Trials started in October, so every 14-day trial here has finished. The hatched part of each bar is everyone who started but did not reach that step.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="churn-h">
+    <div>
+      <h2 id="churn-h">Who cancelled</h2>
+      <p class="lede" id="churn-lede"></p>
+      <div class="sort" role="group" aria-label="Order cancellations">
+        <button type="button" data-sort="mrr" aria-pressed="true">Largest first</button>
+        <button type="button" data-sort="day" aria-pressed="false">Most recent first</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Customer</th>
+          <th scope="col">Plan</th>
+          <th scope="col" class="num">Was paying</th>
+          <th scope="col">Customer for</th>
+          <th scope="col">Left on</th>
+          <th scope="col">Reason they gave</th>
+        </tr>
+      </thead>
+      <tbody id="churn"></tbody>
+      <tfoot><tr><td id="churn-count"></td><td></td><td class="num lost" id="churn-total"></td><td></td><td></td><td></td></tr></tfoot>
+    </table>
+  </section>
+</main>
+
+<script>
+// Sample data for Loomwork, a booking tool for fitness studios.
+const mrr = { last: 45870, customers: 214, moves: [
+  { term: 'New customers', amount:  3180, who: '17 joined' },
+  { term: 'Upgrades',      amount:  1460, who: '11 moved up a plan' },
+  { term: 'Downgrades',    amount:  -620, who: '4 moved down' },
+  { term: 'Cancellations', amount: -1680, who: '9 left' },
+]};
+const funnel = [
+  ['Started a trial', 412],
+  ['Set up their studio', 301],
+  ['Published a booking page', 164],
+  ['Added a card', 121],
+  ['Paid the first invoice', 103],
+];
+const cancelled = [
+  { name: 'Harbor & Pine Studio', plan: 'Team',   mrr: 390, months: 25, day: 21, reason: 'Switched to another booking tool' },
+  { name: 'Ostrander Climbing',   plan: 'Team',   mrr: 390, months: 5,  day: 14, reason: 'Needed class waitlists' },
+  { name: 'Kestrel Yoga',         plan: 'Studio', mrr: 240, months: 14, day: 19, reason: 'Too expensive' },
+  { name: 'Brightside Pilates',   plan: 'Studio', mrr: 240, months: 8,  day: 17, reason: 'Closed the business' },
+  { name: 'Maple Row Barre',      plan: 'Solo',   mrr: 90,  months: 3,  day: 12, reason: 'Too expensive' },
+  { name: 'Field Day Fitness',    plan: 'Solo',   mrr: 90,  months: 11, day: 9,  reason: 'Card failed four times' },
+  { name: 'North Dock Dance',     plan: 'Solo',   mrr: 90,  months: 2,  day: 6,  reason: 'Did not use it enough' },
+  { name: 'Tandem Movement',      plan: 'Solo',   mrr: 90,  months: 6,  day: 4,  reason: 'Card failed four times' },
+  { name: 'Juniper Spin',         plan: 'Solo, 2024 price', mrr: 60, months: 19, day: 2, reason: 'Too expensive' },
+];
+
+const $ = id => document.getElementById(id);
+const usd = n => '$' + Math.abs(n).toLocaleString('en-US');
+const signed = n => (n < 0 ? '−' : '+') + usd(n);
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const tenure = m => m < 12 ? m + ' months' : Math.floor(m / 12) + (m < 24 ? ' year' : ' years') + (m % 12 ? ' ' + m % 12 + ' mo' : '');
+
+// ---- recurring revenue ----
+const net = mrr.moves.reduce((s, m) => s + m.amount, 0);
+const now = mrr.last + net;
+const lostTotal = cancelled.reduce((s, c) => s + c.mrr, 0);
+// self-check: the table and the bridge must tell the same story
+console.assert(lostTotal === -mrr.moves[3].amount && cancelled.length === 9, 'cancellations do not match the bridge');
+
+$('rev-h').textContent = `Recurring revenue is ${usd(now)} a month, ${usd(net)} ${net < 0 ? 'less' : 'more'} than October.`;
+$('rev-sub').textContent = `That is ${net < 0 ? 'down' : 'up'} ${(Math.abs(net) / mrr.last * 100).toFixed(1)}% with five days of the month left. ${mrr.customers} customers are paying today.`;
+
+let run = 0, peak = 0;
+const bars = mrr.moves.map(m => { const lo = Math.min(run, run + m.amount); run += m.amount; peak = Math.max(peak, run); return { ...m, lo, size: Math.abs(m.amount) }; });
+bars.push({ term: 'Net change', amount: net, who: 'since 31 October', lo: Math.min(0, net), size: Math.abs(net), net: true });
+$('bridge').innerHTML = bars.map((b, i) => `
+  <li class="${b.net ? 'net' : b.amount < 0 ? 'loss' : 'gain'}">
+    <div class="plot" aria-hidden="true"><div class="bar" style="--lo:${b.lo / peak};--size:${b.size / peak};--i:${i}"></div></div>
+    <span class="amount">${signed(b.amount)}</span>
+    <span class="term">${b.term}</span>
+    <span class="who">${b.who}</span>
+  </li>`).join('') +
+  `<li class="baseline-note">The line is October's closing figure, ${usd(mrr.last)}. Each bar starts where the one before it ended.</li>`;
+
+// ---- trial funnel ----
+const start = funnel[0][1];
+const drops = funnel.slice(1).map(([, n], i) => ({ lost: funnel[i][1] - n, rate: (funnel[i][1] - n) / funnel[i][1] }));
+const worst = drops.indexOf(drops.reduce((a, b) => b.lost > a.lost ? b : a));
+$('funnel').innerHTML = funnel.map(([name, n], i) => `
+  ${i ? `<li class="drop${i - 1 === worst ? ' worst' : ''}"><span>${drops[i - 1].lost} stopped here, ${Math.round(drops[i - 1].rate * 100)}% of those still in</span></li>` : ''}
+  <li class="step"><span class="name">${name}</span><span class="track" aria-hidden="true"><i style="--w:${n / start}"></i></span><span class="count">${n}</span></li>`).join('');
+const paid = funnel[funnel.length - 1][1];
+$('trial-lede').textContent = `${paid} of ${start} trials became paying customers, ${Math.round(paid / start * 100)}%. The biggest loss is between "${funnel[worst][0].toLowerCase()}" and "${funnel[worst + 1][0].toLowerCase()}": ${drops[worst].lost} trials never got there.`;
+
+// ---- cancellations ----
+const price = cancelled.filter(c => c.reason === 'Too expensive');
+const card = cancelled.filter(c => c.reason.startsWith('Card failed'));
+const sum = a => a.reduce((s, c) => s + c.mrr, 0);
+$('churn-lede').textContent = `${cancelled.length} customers left this month, taking ${usd(lostTotal)} a month with them. ${price.length} said the price (${usd(sum(price))}). ${card.length} did not choose to leave: their card failed (${usd(sum(card))}).`;
+$('churn-count').textContent = `${cancelled.length} customers`;
+$('churn-total').textContent = signed(-lostTotal);
+
+function drawChurn(by) {
+  const rows = [...cancelled].sort((a, b) => by === 'day' ? b.day - a.day : b.mrr - a.mrr || b.day - a.day);
+  $('churn').innerHTML = rows.map(c => `<tr>
+    <td class="customer">${esc(c.name)}</td>
+    <td class="plan">${c.plan}</td>
+    <td class="num lost">${signed(-c.mrr)}</td>
+    <td class="tenure">${tenure(c.months)}</td>
+    <td class="when">${c.day} Nov</td>
+    <td class="reason">${c.reason}</td></tr>`).join('');
+}
+document.querySelector('.sort').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('.sort button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  drawChurn(b.dataset.sort);
+});
+drawChurn('mrr');
+</script>
+</body>
+</html>
