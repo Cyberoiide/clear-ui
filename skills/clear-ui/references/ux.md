@@ -313,8 +313,13 @@ already know how they work.
   primary action. Each chart has a sentence-case title that names what it
   shows, and its own period control only if it differs from the page's.
 - **Empty state:** what this place is for and one button to create the first item.
-- **Settings:** a left list of sections and a narrow single-column list of settings that apply
-  immediately, each with one sentence saying what it changes.
+- **Settings:** a full page with its own left column, replacing the app sidebar. The column starts
+  at the top with "‹ Back to <app>", then a search field that filters the sections by their names
+  and the words they show (Enter opens the first match), then the list of sections. No top bar
+  with the exit in the right corner: the way out sits where the eye starts, as in Linear. The
+  right side is a narrow single-column list of settings that apply immediately, each with one
+  sentence saying what it changes. On a phone, the tab bar is the way back; drop the search when
+  every section fits on screen.
 - **Marketing page:** the product itself as the first thing shown (a real screenshot or a working
   piece of it), one message, one action repeated at the end; plans compared on the same few lines
   with one button each.
