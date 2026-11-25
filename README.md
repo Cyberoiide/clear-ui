@@ -96,15 +96,34 @@ skills/clear-ui/
 
 ## Benchmark
 
-One prompt was given to three agents, each following a different skill (`frontend-design`,
-`ui-ux-pro-max`, `clear-ui`). First replies, screenshots and counts are in
-[benchmark/](benchmark/README.md).
+The same prompt was given to three agents, each following a different skill. This was done twice:
+a time tracker (`clear-ui` 1.0.0) and a subscription dashboard (`clear-ui` 1.1.0).
+
+### Quick comparison
+
+Where a cell holds two numbers, they are time tracker / dashboard.
+
+| | `frontend-design` | `ui-ux-pro-max` | `clear-ui` |
+|---|---|---|---|
+| First reply | The finished screen | The finished screen | Three wireframes and a question |
+| Colour hues | 5 / 3 | 5 / 4 | 0 / 2 |
+| Font sizes | 9 / 8 | 5 / 7 | 4 / 4 |
+| Visible elements | 104 / 169 | 82 / 336 | 44 / 158 |
+| Best at | Character, and explaining the data | Features: undo, sorting, export | Quiet screens with only what was asked |
+| Costs | The most type sizes; one number fills half the first view | The most colour and the most on screen | One extra exchange; fewer features |
+
+It is one run per skill and prompt, set up by the author of `clear-ui`, and several counts measure
+what `clear-ui` is built to minimise. Read it as an illustration, not a ranking. First replies,
+all screenshots and full counts: [time tracker](benchmark/README.md),
+[dashboard](benchmark/2-dashboard/README.md).
+
+### Time tracker
 
 | `frontend-design` | `ui-ux-pro-max` | `clear-ui` |
 |---|---|---|
 | ![](benchmark/shots/frontend-design-final.png) | ![](benchmark/shots/ui-ux-pro-max-final.png) | ![](benchmark/shots/clear-ui-final.png) |
 
-A second run on a dashboard prompt, with version 1.1.0: [benchmark/2-dashboard/](benchmark/2-dashboard/README.md).
+### Subscription dashboard
 
 | `frontend-design` | `ui-ux-pro-max` | `clear-ui` |
 |---|---|---|
