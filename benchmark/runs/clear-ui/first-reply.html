@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time tracker main screen: three directions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font: 13px/1.45 system-ui, sans-serif; color: #222; background: #fff; padding: 24px; }
+  h1 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .lede { color: #666; margin-bottom: 20px; max-width: 70ch; }
+  .directions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .direction h2 { font-size: 14px; font-weight: 600; }
+  .direction .idea { color: #555; margin: 2px 0 10px; }
+  .direction dl { margin-top: 10px; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+  .direction dt { color: #777; }
+  .pick { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid #222; border-radius: 99px; font-size: 11px; font-weight: 500; }
+
+  .frames { display: flex; gap: 10px; align-items: flex-start; }
+  .frame { border: 1px solid #bbb; border-radius: 8px; height: 300px; overflow: hidden; display: flex; background: #fff; font-size: 11px; flex: 1; min-width: 0; }
+  .frame.phone { flex: none; width: 136px; height: 300px; flex-direction: column; }
+  .row { display: flex; gap: 6px; align-items: center; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .grow { flex: 1; min-width: 0; }
+  .pad { padding: 8px; }
+  .top { padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 6px; }
+  .box { border: 1px solid #ccc; border-radius: 4px; padding: 6px; background: #fafafa; }
+  .bar { height: 4px; border-radius: 2px; background: #999; }
+  .item { padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item.on { background: #dcdcdc; font-weight: 600; }
+  .list .item { border-bottom: 1px solid #e6e6e6; border-radius: 0; padding: 5px 2px; display: flex; gap: 6px; }
+  .list .item span:first-child { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .btn { border: 1px solid #999; border-radius: 99px; padding: 2px 8px; white-space: nowrap; background: #fff; }
+  .btn.primary { background: #222; border-color: #222; color: #fff; }
+  .field { border: 1px solid #aaa; border-radius: 4px; padding: 3px 6px; color: #888; background: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .muted { color: #888; }
+  .title { font-weight: 600; font-size: 12px; }
+  .big { font-size: 22px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Time tracker main screen: three directions</h1>
+<p class="lede">Job of the screen: start a timer on a project, stop it, and check where the day and the week went. The dark button is the primary action in each direction. Each one is drawn at desktop width and as a phone.</p>
+
+<div class="directions">
+
+  <section class="direction">
+    <h2>Timer bar, then the day, week beside it <span class="pick">Recommended</span></h2>
+    <p class="idea">One bar at the top is the timer; today's entries fill the page under it and the week's hours per project sit in a column on the right.</p>
+    <div class="frames">
+      <div class="frame">
+        <div class="col grow" style="gap:0">
+          <div class="top"><span class="title grow">Time tracker</span><span class="muted">Wed 25 Nov</span></div>
+          <div class="pad col" style="gap:10px">
+            <div class="box row">
+              <span class="field grow">What are you working on?</span>
+              <span class="field">Kestrel Bikes ▾</span>
+              <span class="title">0:00:00</span>
+              <span class="btn primary">Start timer</span>
+            </div>
+            <div class="row" style="align-items:flex-start; gap:12px">
+              <div class="col grow">
+                <div class="row"><span class="title grow">Today</span><span class="title">4h 05m</span></div>
+                <div class="list">
+                  <div class="item"><span>Checkout flow <span class="muted">Kestrel Bikes</span></span><span class="muted">13:10–14:40</span><span>1h 30m</span></div>
+                  <div class="item"><span>Logo options <span class="muted">Atelier Morel</span></span><span class="muted">10:50–12:15</span><span>1h 25m</span></div>
+                  <div class="item"><span>Invoices <span class="muted">Admin</span></span><span class="muted">09:00–10:10</span><span>1h 10m</span></div>
+                </div>
+              </div>
+              <div class="col" style="width:34%">
+                <div class="row"><span class="title grow">This week</span><span class="title">19h 40m</span></div>
+                <div class="col" style="gap:3px"><div class="row"><span class="grow">Kestrel Bikes</span><span>9h 15m</span></div><div class="bar" style="width:100%"></div></div>
+                <div class="col" style="gap:3px"><div class="row"><span class="grow">Atelier Morel</span><span>6h 05m</span></div><div class="bar" style="width:66%"></div></div>
+                <div class="col" style="gap:3px"><div class="row"><span class="grow">Admin</span><span>4h 20m</span></div><div class="bar" style="width:47%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame phone">
+        <div class="top"><span class="title">Time tracker</span></div>
+        <div class="pad col">
+          <span class="field">What are you working on?</span>
+          <span class="field">Kestrel Bikes ▾</span>
+          <span class="btn primary" style="text-align:center">Start timer</span>
+          <span class="title">Today 4h 05m</span>
+          <div class="list"><div class="item"><span>Checkout flow</span><span>1h 30m</span></div><div class="item"><span>Logo options</span><span>1h 25m</span></div></div>
+          <span class="title">This week 19h 40m</span>
+          <div class="bar" style="width:100%"></div><div class="bar" style="width:66%"></div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Start</dt><dd>1 click (last project is pre-selected); 2 to switch project.</dd>
+      <dt>Best at</dt><dd>All three things you asked for on screen at once, with the timer always in the same place.</dd>
+      <dt>Costs</dt><dd>The week column is narrow, so it shows totals per project and nothing per day. On a phone the week is below the day.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Projects are the timer</h2>
+    <p class="idea">The screen is the list of projects with this week's hours; pressing a project starts its timer, pressing it again stops it. Today's entries sit underneath.</p>
+    <div class="frames">
+      <div class="frame">
+        <div class="col grow" style="gap:0">
+          <div class="top"><span class="title grow">Time tracker</span><span class="muted">This week 19h 40m</span></div>
+          <div class="pad col" style="gap:10px">
+            <div class="list">
+              <div class="item on"><span>Kestrel Bikes <span class="muted">running 0:42:17</span></span><span>9h 15m</span><span class="btn primary">Stop timer</span></div>
+              <div class="item"><span>Atelier Morel</span><span>6h 05m</span><span class="btn">Start</span></div>
+              <div class="item"><span>Halden Clinic</span><span>0h 00m</span><span class="btn">Start</span></div>
+              <div class="item"><span>Admin</span><span>4h 20m</span><span class="btn">Start</span></div>
+            </div>
+            <div class="row"><span class="title grow">Today</span><span class="title">4h 05m</span></div>
+            <div class="list">
+              <div class="item"><span>Kestrel Bikes</span><span class="muted">13:10–14:40</span><span>1h 30m</span></div>
+              <div class="item"><span>Atelier Morel</span><span class="muted">10:50–12:15</span><span>1h 25m</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame phone">
+        <div class="top"><span class="title">Time tracker</span></div>
+        <div class="pad col">
+          <div class="list">
+            <div class="item on"><span>Kestrel Bikes</span><span>0:42</span></div>
+            <div class="item"><span>Atelier Morel</span><span>6h 05m</span></div>
+            <div class="item"><span>Halden Clinic</span><span>0h 00m</span></div>
+            <div class="item"><span>Admin</span><span>4h 20m</span></div>
+          </div>
+          <span class="btn primary" style="text-align:center">Stop timer</span>
+          <span class="title">Today 4h 05m</span>
+          <div class="list"><div class="item"><span>Kestrel Bikes</span><span>1h 30m</span></div></div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Start</dt><dd>1 click, on any project, with no picker.</dd>
+      <dt>Best at</dt><dd>Switching between a handful of projects many times a day.</dd>
+      <dt>Costs</dt><dd>Every row carries a button. No place to say what you worked on. Gets long past about eight projects, pushing today off screen.</dd>
+    </dl>
+  </section>
+
+  <section class="direction">
+    <h2>Big clock with two tabs</h2>
+    <p class="idea">The running clock is the whole top of the screen; today and this week are two tabs under it, one visible at a time.</p>
+    <div class="frames">
+      <div class="frame">
+        <div class="col grow" style="gap:0">
+          <div class="top"><span class="title grow">Time tracker</span><span class="muted">Wed 25 Nov</span></div>
+          <div class="pad col" style="align-items:center; gap:8px">
+            <span class="big">0:42:17</span>
+            <div class="row"><span class="field">Checkout flow</span><span class="field">Kestrel Bikes ▾</span></div>
+            <span class="btn primary">Stop timer</span>
+            <div class="row" style="align-self:stretch; border-bottom:1px solid #ddd"><span class="item on">Today</span><span class="item">This week</span></div>
+            <div class="list" style="align-self:stretch">
+              <div class="item"><span>Checkout flow <span class="muted">Kestrel Bikes</span></span><span class="muted">13:10–14:40</span><span>1h 30m</span></div>
+              <div class="item"><span>Logo options <span class="muted">Atelier Morel</span></span><span class="muted">10:50–12:15</span><span>1h 25m</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frame phone">
+        <div class="top"><span class="title">Time tracker</span></div>
+        <div class="pad col" style="align-items:center">
+          <span class="big">0:42:17</span>
+          <span class="field" style="align-self:stretch">Kestrel Bikes ▾</span>
+          <span class="btn primary" style="align-self:stretch; text-align:center">Stop timer</span>
+          <div class="row" style="align-self:stretch"><span class="item on">Today</span><span class="item">This week</span></div>
+          <div class="list" style="align-self:stretch"><div class="item"><span>Checkout flow</span><span>1h 30m</span></div><div class="item"><span>Logo options</span><span>1h 25m</span></div></div>
+        </div>
+      </div>
+    </div>
+    <dl>
+      <dt>Start</dt><dd>1 click; 2 to switch project.</dd>
+      <dt>Best at</dt><dd>Phones, and people who mostly want to glance at the clock.</dd>
+      <dt>Costs</dt><dd>Today and this week are never visible together: seeing the week takes a click every time. A lot of space spent on one number.</dd>
+    </dl>
+  </section>
+
+</div>
+</body>
+</html>

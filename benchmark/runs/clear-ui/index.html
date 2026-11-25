@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time tracker</title>
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+/* Tokens and base classes from clear-ui assets/tokens.css (only what this screen uses). */
+:root {
+  color-scheme: light;
+  --bg: #ffffff; --bg-subtle: #fafafa; --bg-soft: #f4f4f4; --bg-soft-hover: #ececec; --bg-raised: #ffffff;
+  --ink: #0d0d0d; --ink-hover: #303030; --ink-active: #414141; --on-ink: #ffffff;
+  --text: #0d0d0d; --text-2: #5d5d5d; --text-3: #6e6e6e; --text-placeholder: #8f8f8f;
+  --border: rgba(13, 13, 13, 0.08); --border-strong: rgba(13, 13, 13, 0.16);
+  --ring: rgba(13, 13, 13, 0.12); --focus: #0d0d0d;
+  --success: #15803d; --success-soft: #edf7f0;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text-sm: 13px; --lh-sm: 20px;
+  --text-base: 14px; --lh-base: 20px;
+  --text-md: 16px; --lh-md: 24px;
+  --text-xl: 24px; --lh-xl: 32px;
+  --radius-xl: 12px; --radius-2xl: 16px; --radius-full: 999px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1); --dur-fast: 100ms; --dur: 150ms;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111111; --bg-subtle: #161616; --bg-soft: #1f1f1f; --bg-soft-hover: #292929; --bg-raised: #1c1c1c;
+    --ink: #f2f2f2; --ink-hover: #d9d9d9; --ink-active: #c4c4c4; --on-ink: #0d0d0d;
+    --text: #f2f2f2; --text-2: #a3a3a3; --text-3: #8a8a8a; --text-placeholder: #6b6b6b;
+    --border: rgba(255, 255, 255, 0.09); --border-strong: rgba(255, 255, 255, 0.18);
+    --ring: rgba(255, 255, 255, 0.16); --focus: #f2f2f2;
+    --success: #4ade80; --success-soft: rgba(74, 222, 128, 0.12);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111111; --bg-subtle: #161616; --bg-soft: #1f1f1f; --bg-soft-hover: #292929; --bg-raised: #1c1c1c;
+  --ink: #f2f2f2; --ink-hover: #d9d9d9; --ink-active: #c4c4c4; --on-ink: #0d0d0d;
+  --text: #f2f2f2; --text-2: #a3a3a3; --text-3: #8a8a8a; --text-placeholder: #6b6b6b;
+  --border: rgba(255, 255, 255, 0.09); --border-strong: rgba(255, 255, 255, 0.18);
+  --ring: rgba(255, 255, 255, 0.16); --focus: #f2f2f2;
+  --success: #4ade80; --success-soft: rgba(74, 222, 128, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 400 var(--text-base)/var(--lh-base) var(--font-sans);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+h1, h2 { margin: 0; font-weight: 500; }
+p { margin: 0; text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 16px; min-width: 112px; /* same width for Start and Stop, so nothing shifts */
+  border: 1px solid transparent; border-radius: var(--radius-xl);
+  background: var(--ink); color: var(--on-ink);
+  font: 500 var(--text-base)/1 var(--font-sans);
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: background-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.btn:hover { background: var(--ink-hover); transition-duration: 0s, var(--dur-fast); }
+.btn:active { background: var(--ink-active); transform: scale(0.98); }
+
+.input {
+  width: 100%; height: 40px; padding: 0 12px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-xl);
+  background: var(--bg-raised); color: var(--text);
+  font: 400 var(--text-base)/var(--lh-base) var(--font-sans);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.input::placeholder { color: var(--text-placeholder); }
+.input:hover { border-color: var(--text-3); }
+.input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--ring); }
+select.input { text-overflow: ellipsis; cursor: pointer; }
+@media (pointer: coarse) { .input { font-size: 16px; } }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: var(--radius-full); background: var(--success-soft); color: var(--success); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ---------- This screen ---------- */
+
+.topbar { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 24px; border-bottom: 1px solid var(--border); }
+.topbar h1 { font-size: var(--text-md); line-height: var(--lh-md); letter-spacing: -0.01em; margin-right: auto; }
+.meta { font-size: var(--text-sm); line-height: var(--lh-sm); color: var(--text-3); }
+
+.content { max-width: 1120px; margin: 0 auto; padding: 24px; display: grid; gap: 40px; }
+
+.timer { display: grid; grid-template-columns: minmax(0, 1fr) 280px auto auto; align-items: center; gap: 8px; }
+.clock { min-width: 120px; padding: 0 8px; text-align: right; font-size: var(--text-xl); line-height: var(--lh-xl); font-weight: 600; letter-spacing: -0.02em; color: var(--text-3); }
+.timer.running .clock { color: var(--text); }
+
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+.head { display: flex; align-items: baseline; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.head h2 { font-size: var(--text-md); line-height: var(--lh-md); letter-spacing: -0.01em; }
+.head .meta { margin-right: auto; }
+.head .total { font-size: var(--text-md); line-height: var(--lh-md); font-weight: 500; }
+
+.list { list-style: none; margin: 0; padding: 0; }
+.entry { display: grid; grid-template-columns: minmax(0, 1fr) auto 72px; align-items: center; gap: 16px; min-height: 60px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.entry:last-child { border-bottom: 0; }
+.entry .what { min-width: 0; }
+.entry .desc, .entry .proj, .week .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.entry .proj { font-size: var(--text-sm); line-height: var(--lh-sm); color: var(--text-2); }
+.entry .when { display: flex; align-items: center; gap: 8px; }
+.entry .dur { text-align: right; }
+.nodesc { color: var(--text-2); }
+
+.week li { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.week li:last-child { border-bottom: 0; }
+.week .line { display: flex; gap: 12px; }
+.week .name { margin-right: auto; }
+.track { height: 4px; margin-top: 8px; border-radius: 2px; background: var(--bg-soft-hover); }
+.track i { display: block; height: 100%; border-radius: 2px; background: var(--ink); }
+
+.empty { padding: 40px 0; text-align: center; }
+.empty h3 { margin: 0 0 4px; font-size: var(--text-md); line-height: var(--lh-md); font-weight: 500; }
+.empty p { max-width: 44ch; margin: 0 auto; color: var(--text-2); }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 800px) {
+  .cols { grid-template-columns: 1fr; }
+  .timer { grid-template-columns: minmax(0, 1fr) auto; }
+  .timer .input { grid-column: 1 / -1; }
+  .clock { text-align: left; padding: 0; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .content { padding: 16px; gap: 32px; }
+  .timer { grid-template-columns: 1fr; }
+  .timer .input { height: 48px; border-radius: var(--radius-2xl); }
+  .btn { height: 48px; border-radius: var(--radius-2xl); font-size: var(--text-md); }
+  .entry { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+  .entry .when { grid-row: 2; grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Time tracker</h1>
+</header>
+
+<main class="content">
+
+  <form class="timer" id="timer" aria-label="Timer">
+    <input class="input" id="desc" aria-label="What are you working on?" placeholder="What are you working on?" autocomplete="off" maxlength="120">
+    <select class="input" id="project" aria-label="Project"></select>
+    <input class="input" id="newProject" aria-label="New project name" placeholder="Project name, then Enter" autocomplete="off" maxlength="80" hidden>
+    <div class="clock num" id="clock" role="timer" aria-label="Elapsed time">0:00:00</div>
+    <button class="btn" id="toggle" type="submit">Start timer</button>
+  </form>
+
+  <div class="cols">
+    <section aria-labelledby="todayH">
+      <div class="head">
+        <h2 id="todayH">Today</h2>
+        <span class="total num" id="todayTotal" style="margin-left:auto"></span>
+      </div>
+      <ul class="list" id="today"></ul>
+    </section>
+
+    <section aria-labelledby="weekH">
+      <div class="head">
+        <h2 id="weekH">This week</h2>
+        <span class="meta" id="weekRange"></span>
+        <span class="total num" id="weekTotal"></span>
+      </div>
+      <ul class="list week" id="week"></ul>
+    </section>
+  </div>
+
+</main>
+
+<script>
+const KEY = 'hours.v1';
+const MIN = 60000, DAY = 86400000;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
+
+const dayStart = t => new Date(t).setHours(0, 0, 0, 0);
+function weekStart(t) { // Monday 00:00 local
+  const d = new Date(dayStart(t));
+  d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+  return d.getTime();
+}
+function hm(ms) { // 5100000 -> "1h 25m"
+  const m = Math.floor(ms / MIN);
+  return Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm';
+}
+function hms(ms) { // 2537000 -> "0:42:17"
+  const s = Math.floor(ms / 1000), p = n => String(n).padStart(2, '0');
+  return Math.floor(s / 3600) + ':' + p(Math.floor(s / 60) % 60) + ':' + p(s % 60);
+}
+const clockTime = t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+console.assert(hm(5100000) === '1h 25m' && hms(2537000) === '0:42:17', 'duration format');
+console.assert(new Date(weekStart(new Date(2026, 10, 29, 23))).getDate() === 23, 'a Sunday belongs to the week of the Monday before');
+
+function seed() { // sample week so the first screen is a working one; only entries that have already ended
+  const projects = [
+    { id: 'p1', name: 'Kestrel Bikes webshop' },
+    { id: 'p2', name: 'Atelier Morel brand identity' },
+    { id: 'p3', name: 'Halden Clinic booking app' },
+    { id: 'p4', name: 'Admin and invoicing' },
+  ];
+  const now = Date.now(), mon = weekStart(now), today = Math.round((dayStart(now) - mon) / DAY);
+  const day = [ // start hour, start minute, minutes, description; projects rotate per day
+    [9, 0, 70, ['Invoices and email', 'Quote for Halden Clinic', 'Bookkeeping']],
+    [10, 50, 85, ['Logo options, round 2', 'Product page layout', 'Appointment flow wireframes']],
+    [13, 10, 90, ['Checkout flow', 'Colour and type system', 'Cart and shipping rules']],
+    [15, 20, 55, ['Client call and notes', 'Stationery mockups', 'Review with Dr. Halden']],
+  ];
+  const who = [['p4', 'p2', 'p1', 'p1'], ['p4', 'p1', 'p2', 'p2'], ['p4', 'p3', 'p1', 'p3']];
+  const entries = [];
+  for (let d = 0; d <= today; d++) day.forEach(([h, m, mins, descs], i) => {
+    const start = new Date(mon + d * DAY).setHours(h, m), end = start + mins * MIN;
+    if (end <= now) entries.push({ desc: descs[d % 3], projectId: who[d % 3][i], start, end });
+  });
+  return { projects, entries, cur: { desc: '', projectId: 'p1', start: null } };
+}
+
+let state;
+try { state = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+if (!state || !Array.isArray(state.projects) || !state.projects.length || !Array.isArray(state.entries) || !state.cur) state = seed();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }; // private mode: works until the tab closes
+
+const projectName = id => (state.projects.find(p => p.id === id) || { name: 'Deleted project' }).name;
+
+function renderProjects() {
+  $('project').innerHTML = state.projects.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')
+    + '<option value="">New project…</option>';
+  $('project').value = state.cur.projectId;
+}
+
+function renderLists() {
+  const now = Date.now(), t0 = dayStart(now), w0 = weekStart(now), cur = state.cur;
+  // shortcut: an entry counts on the day it started, even past midnight; split entries if overnight work matters
+  const all = cur.start ? [{ ...cur, end: now, running: true }, ...state.entries] : state.entries;
+
+  const today = all.filter(e => e.start >= t0).sort((a, b) => b.start - a.start);
+  $('todayTotal').textContent = hm(today.reduce((s, e) => s + e.end - e.start, 0));
+  $('today').innerHTML = today.length ? today.map(e => `
+    <li class="entry">
+      <div class="what">
+        <div class="desc${e.desc ? '' : ' nodesc'}">${esc(e.desc || 'No description')}</div>
+        <div class="proj">${esc(projectName(e.projectId))}</div>
+      </div>
+      <div class="when meta num">${clockTime(e.start)} – ${e.running ? 'now <span class="badge">Running</span>' : clockTime(e.end)}</div>
+      <div class="dur num">${hm(e.end - e.start)}</div>
+    </li>`).join('')
+    : '<li class="empty"><h3>No entries today</h3><p>Pick a project above and start the timer. What you track shows up here.</p></li>';
+
+  const sums = new Map();
+  all.filter(e => e.start >= w0).forEach(e => sums.set(e.projectId, (sums.get(e.projectId) || 0) + e.end - e.start));
+  const rows = [...sums].sort((a, b) => b[1] - a[1]), max = rows.length ? rows[0][1] : 0;
+  $('weekTotal').textContent = hm(rows.reduce((s, r) => s + r[1], 0));
+  $('week').innerHTML = rows.length ? rows.map(([id, ms]) => `
+    <li>
+      <div class="line"><span class="name">${esc(projectName(id))}</span><span class="num">${hm(ms)}</span></div>
+      <div class="track"><i style="width:${max ? Math.max(1, ms / max * 100) : 0}%"></i></div>
+    </li>`).join('')
+    : '<li class="empty"><h3>No hours this week</h3><p>Hours per project add up here from Monday.</p></li>';
+}
+
+let shownMinute = -1;
+function tick() {
+  const running = !!state.cur.start, ms = running ? Date.now() - state.cur.start : 0;
+  $('clock').textContent = hms(ms);
+  document.title = running ? hms(ms) + ' · ' + projectName(state.cur.projectId) : 'Time tracker';
+  const minute = Math.floor(Date.now() / MIN); // lists show minutes, so redraw them once a minute, not every second
+  if (minute !== shownMinute) { shownMinute = minute; renderLists(); }
+}
+
+function render() {
+  const running = !!state.cur.start;
+  $('timer').classList.toggle('running', running);
+  $('toggle').textContent = running ? 'Stop timer' : 'Start timer';
+  shownMinute = -1;
+  tick();
+}
+
+$('timer').addEventListener('submit', e => {
+  e.preventDefault();
+  addProject();
+  const cur = state.cur;
+  if (cur.start) {
+    state.entries.push({ desc: cur.desc.trim(), projectId: cur.projectId, start: cur.start, end: Date.now() });
+    state.cur = { desc: '', projectId: cur.projectId, start: null };
+    $('desc').value = '';
+  } else cur.start = Date.now();
+  save(); render();
+});
+
+$('desc').addEventListener('input', e => { state.cur.desc = e.target.value; save(); if (state.cur.start) renderLists(); });
+
+$('project').addEventListener('change', e => {
+  if (e.target.value) { state.cur.projectId = e.target.value; save(); render(); return; }
+  e.target.hidden = true; $('newProject').hidden = false; $('newProject').value = ''; $('newProject').focus();
+});
+
+function closeNewProject() { $('newProject').hidden = true; $('project').hidden = false; renderProjects(); }
+function addProject() {
+  if ($('newProject').hidden) return;
+  const name = $('newProject').value.trim();
+  if (name) {
+    const same = state.projects.find(p => p.name.toLowerCase() === name.toLowerCase());
+    const p = same || { id: 'p' + Date.now(), name };
+    if (!same) state.projects.push(p);
+    state.cur.projectId = p.id; save();
+  }
+  closeNewProject(); render();
+}
+$('newProject').addEventListener('blur', addProject);
+$('newProject').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addProject(); $('project').focus(); } // create only; starting stays a separate act
+  else if (e.key === 'Escape') { e.target.value = ''; closeNewProject(); $('project').focus(); }
+});
+
+const now = new Date(), w0 = weekStart(now), w1 = w0 + 6 * DAY + 12 * 3600000; // noon Sunday: safe across DST
+const dm = t => new Date(t).toLocaleDateString([], { day: 'numeric', month: 'short' });
+$('weekRange').textContent = dm(w0) + ' – ' + dm(w1);
+$('desc').value = state.cur.desc;
+renderProjects();
+render();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Design system tokens (ui-ux-pro-max: Flat Design, teal focus + action orange) */
+    --color-primary: #0D9488;
+    --color-accent: #EA580C;
+    --color-on-accent: #000000;
+    --color-background: #F0FDFA;
+    --color-foreground: #134E4A;
+    --color-card: #FFFFFF;
+    --color-muted: #E8F1F4;
+    --color-muted-foreground: #475569;
+    --color-border: #99F6E4;
+    --color-destructive: #DC2626;
+    --color-on-destructive: #FFFFFF;
+    --color-ring: #0D9488;
+    /* Project series: each is at least 3:1 on white; names and values are always shown as text too */
+    --color-project-1: #0D9488;
+    --color-project-2: #EA580C;
+    --color-project-3: #4F46E5;
+    --color-project-4: #DB2777;
+    --color-project-5: #475569;
+    --color-project-6: #B45309;
+
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px;
+    --radius: 12px;
+    --control-height: 48px;
+    --duration-fast: 150ms;
+    --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-foreground);
+    background: var(--color-background);
+  }
+  h1, h2, p, ul { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  svg { flex: none; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+
+  .skip-link {
+    position: absolute; left: var(--space-4); top: -100px;
+    background: var(--color-card); color: var(--color-foreground);
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius); z-index: 100;
+  }
+  .skip-link:focus { top: var(--space-4); }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: var(--space-4); }
+
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-4); padding-block: var(--space-2) var(--space-4);
+  }
+  .brand { display: flex; align-items: center; gap: var(--space-2); color: var(--color-primary); }
+  .brand h1 { font-size: 20px; font-weight: 700; color: var(--color-foreground); white-space: nowrap; }
+  .date { font-size: 14px; color: var(--color-muted-foreground); text-align: right; }
+
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-6) var(--space-4);
+  }
+
+  /* Timer */
+  .timer-form { display: grid; gap: var(--space-4); }
+  .field { display: grid; gap: var(--space-1); min-width: 0; }
+  label { font-size: 14px; font-weight: 500; }
+  select, input[type="text"] {
+    width: 100%; height: var(--control-height);
+    padding: 0 var(--space-3);
+    font: inherit; color: inherit; background: var(--color-card);
+    border: 1px solid var(--color-primary); border-radius: 8px;
+  }
+  select { cursor: pointer; }
+  .error { font-size: 14px; color: var(--color-destructive); }
+  .clock-wrap { display: grid; gap: var(--space-1); }
+  .clock {
+    font-size: 48px; font-weight: 700; line-height: 1.1;
+    font-variant-numeric: tabular-nums; letter-spacing: 0;
+  }
+  .status { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; color: var(--color-muted-foreground); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-muted-foreground); }
+  .is-running .status-dot { background: var(--color-accent); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-height: var(--control-height); padding: 0 var(--space-6);
+    font: inherit; font-weight: 600;
+    border: 0; border-radius: 8px; cursor: pointer;
+    touch-action: manipulation;
+    transition: opacity var(--duration-fast) ease, background-color var(--duration-fast) ease;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { opacity: .75; }
+  .btn-start { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn-stop { background: var(--color-destructive); color: var(--color-on-destructive); }
+  .btn-ghost {
+    background: transparent; color: var(--color-foreground);
+    min-height: 44px; padding: 0 var(--space-3); text-decoration: underline;
+  }
+  .icon-btn {
+    display: inline-grid; place-items: center; width: 44px; height: 44px;
+    background: transparent; color: var(--color-muted-foreground);
+    border: 0; border-radius: 8px; cursor: pointer; touch-action: manipulation;
+    transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
+  }
+  .icon-btn:hover { background: var(--color-muted); color: var(--color-destructive); }
+
+  /* Sections */
+  .columns { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-4); margin-bottom: var(--space-2);
+  }
+  .section-head h2 { font-size: 18px; font-weight: 700; }
+  .section-head .sub { font-size: 14px; color: var(--color-muted-foreground); }
+  .total { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .empty { padding: var(--space-6) 0 var(--space-2); color: var(--color-muted-foreground); }
+
+  .dot { width: 12px; height: 12px; border-radius: 3px; }
+
+  .entry {
+    display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 44px;
+    gap: var(--space-3); align-items: center;
+    padding: var(--space-3) 0; border-top: 1px solid var(--color-muted);
+  }
+  .entry-name { font-weight: 600; overflow-wrap: anywhere; }
+  .entry-note { color: var(--color-muted-foreground); overflow-wrap: anywhere; }
+  .entry-time { font-size: 14px; color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+  .entry-dur { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .week-row { padding: var(--space-3) 0; border-top: 1px solid var(--color-muted); }
+  .week-label { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+  .week-name { flex: 1; min-width: 0; font-weight: 500; overflow-wrap: anywhere; }
+  .week-hours { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bar { height: 12px; background: var(--color-muted); border-radius: 6px; overflow: hidden; }
+  .bar span { display: block; height: 100%; border-radius: 6px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: var(--space-6); transform: translateX(-50%);
+    display: flex; align-items: center; gap: var(--space-2);
+    max-width: calc(100vw - 32px);
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-4);
+    min-height: 52px;
+    background: var(--color-foreground); color: var(--color-card);
+    border-radius: var(--radius); z-index: 40;
+  }
+  .toast .btn-ghost { color: var(--color-card); }
+  .toast:empty, [hidden] { display: none !important; }
+
+  @media (min-width: 768px) {
+    .container { padding: var(--space-6); }
+    .card { padding: var(--space-6); }
+    .timer-form { grid-template-columns: 1fr 1fr; align-items: end; }
+    .clock-wrap { align-self: center; }
+    .timer-form .btn { justify-self: end; min-width: 160px; }
+  }
+  @media (min-width: 1024px) {
+    .timer-form { grid-template-columns: minmax(200px, 280px) minmax(0, 1fr) auto auto; gap: var(--space-6); }
+    .clock-wrap { width: 250px; }
+    .columns { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-6); margin-top: var(--space-6); align-items: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="container">
+  <header class="top">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <h1>Time Tracker</h1>
+    </div>
+    <p class="date" id="today-date"></p>
+  </header>
+
+  <main id="main">
+    <section class="card" aria-labelledby="timer-title">
+      <h2 id="timer-title" hidden>Timer</h2>
+      <form class="timer-form" id="timer-form" novalidate>
+        <div class="field">
+          <label for="project">Project</label>
+          <select id="project"></select>
+          <div id="new-project-field" class="field" hidden>
+            <label for="new-project">New project name</label>
+            <input type="text" id="new-project" maxlength="60" autocomplete="off" aria-describedby="new-project-error">
+            <p class="error" id="new-project-error" role="alert"></p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="note">What are you working on? (optional)</label>
+          <input type="text" id="note" maxlength="120" autocomplete="off">
+        </div>
+        <div class="clock-wrap" id="clock-wrap">
+          <div class="clock" id="clock" role="timer" aria-live="off" aria-label="Elapsed time">0:00:00</div>
+          <p class="status"><span class="status-dot" aria-hidden="true"></span><span id="status-text">Not tracking</span></p>
+        </div>
+        <button type="submit" class="btn btn-start" id="toggle"></button>
+      </form>
+    </section>
+
+    <div class="columns">
+      <section class="card" aria-labelledby="today-title">
+        <div class="section-head">
+          <h2 id="today-title">Today</h2>
+          <p><span class="sub">Total </span><span class="total" id="today-total"></span></p>
+        </div>
+        <ul id="today-list"></ul>
+        <p class="empty" id="today-empty" hidden>No entries yet today. Pick a project and press Start.</p>
+      </section>
+
+      <section class="card" aria-labelledby="week-title">
+        <div class="section-head">
+          <div>
+            <h2 id="week-title">This week</h2>
+            <p class="sub" id="week-range"></p>
+          </div>
+          <p><span class="sub">Total </span><span class="total" id="week-total"></span></p>
+        </div>
+        <ul id="week-list"></ul>
+        <p class="empty" id="week-empty" hidden>No hours tracked this week yet.</p>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const KEY = 'time-tracker.v1';
+  const $ = id => document.getElementById(id);
+  const ICON = {
+    play: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
+    stop: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+    trash: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'
+  };
+
+  // ---- time helpers
+  const dayStart = (t = Date.now()) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+  const weekStart = (t = Date.now()) => { const d = new Date(dayStart(t)); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d.getTime(); }; // Monday
+  const pad = n => String(n).padStart(2, '0');
+  const fmtClock = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 3600)}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
+  const fmtDur = ms => {
+    const s = Math.floor(ms / 1000), m = Math.floor(s / 60);
+    if (m < 1) return `${s}s`;
+    return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${pad(m % 60)}m`;
+  };
+  const fmtTime = t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const fmtDay = (t, opts) => new Date(t).toLocaleDateString([], opts);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  console.assert(fmtClock(3723000) === '1:02:03' && fmtDur(59000) === '59s' && fmtDur(3900000) === '1h 05m', 'time formatting');
+  console.assert(new Date(weekStart(new Date(2026, 10, 29, 15).getTime())).getDate() === 23, 'week starts on Monday');
+
+  // ---- state
+  function seed() {
+    // Sample data for the current week so the screen is not empty on first open.
+    const projects = ['Acme website redesign', 'Northwind mobile app', 'Lumen brand identity', 'Admin & invoicing']
+      .map((name, i) => ({ id: 'p' + (i + 1), name, color: i }));
+    const notes = [['Homepage layout', 'Component library', 'Client review'], ['Onboarding screens', 'Sprint call', 'Bug fixes'],
+      ['Logo concepts', 'Colour palette', 'Style guide'], ['Invoices', 'Email', 'Proposal']];
+    const slots = [[9, 95, 0], [11, 50, 1], [13.5, 110, 0], [16, 40, 2], [17, 25, 3]];
+    const entries = [], now = Date.now(), w = weekStart();
+    for (let d = 0; d < 5; d++) slots.forEach(([h, min, p], i) => {
+      const pi = (p + (d % 2 ? i : 0)) % 4, start = w + d * 864e5 + h * 36e5, end = start + (min + d * 7) * 6e4;
+      if (end < now) entries.push({ id: `s${d}${i}`, projectId: projects[pi].id, note: notes[pi][(d + i) % 3], start, end });
+    });
+    return { projects, entries, running: null };
+  }
+  function load() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY));
+      if (s && Array.isArray(s.projects) && Array.isArray(s.entries)) return s;
+    } catch (e) { /* unreadable storage: fall through to sample data */ }
+    return seed();
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { toast('Your browser blocked saving. Entries will be lost when this tab closes.'); }
+  }
+  let state = load();
+  const project = id => state.projects.find(p => p.id === id) || { name: 'Deleted project', color: 4 };
+  const colorVar = p => `var(--color-project-${p.color % 6 + 1})`;
+
+  // ---- toast (polite, does not take focus)
+  let toastTimer;
+  function toast(msg, undo) {
+    const el = $('toast');
+    el.innerHTML = `<span>${esc(msg)}</span>` + (undo ? '<button type="button" class="btn btn-ghost">Undo</button>' : '');
+    if (undo) el.querySelector('button').onclick = () => { undo(); el.innerHTML = ''; };
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.innerHTML = ''; }, 5000);
+  }
+
+  // ---- rendering
+  const runningMs = () => state.running ? Date.now() - state.running.start : 0;
+
+  function renderProjects() {
+    const sel = $('project'), current = state.running ? state.running.projectId : sel.value;
+    sel.innerHTML = state.projects.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('') +
+      `<option value="__new"${state.running ? ' disabled' : ''}>New project…</option>`;
+    if (state.projects.some(p => p.id === current)) sel.value = current;
+    else if (!state.projects.length) sel.value = '__new';
+    $('new-project-field').hidden = sel.value !== '__new';
+  }
+
+  function renderTimer() {
+    const r = state.running, btn = $('toggle');
+    $('clock').textContent = fmtClock(runningMs());
+    $('clock-wrap').classList.toggle('is-running', !!r);
+    $('status-text').textContent = r ? `Tracking ${project(r.projectId).name} since ${fmtTime(r.start)}` : 'Not tracking';
+    btn.className = 'btn ' + (r ? 'btn-stop' : 'btn-start');
+    btn.innerHTML = r ? ICON.stop + 'Stop timer' : ICON.play + 'Start timer';
+    document.title = r ? `${fmtClock(runningMs())} · Time Tracker` : 'Time Tracker';
+  }
+
+  function renderToday() {
+    // shortcut: an entry that crosses midnight counts fully on its start day; split entries when reports need exact days
+    const list = state.entries.filter(e => e.start >= dayStart()).sort((a, b) => b.start - a.start);
+    $('today-list').innerHTML = list.map(e => {
+      const p = project(e.projectId);
+      return `<li class="entry">
+        <span class="dot" style="background:${colorVar(p)}" aria-hidden="true"></span>
+        <div>
+          <div class="entry-name">${esc(p.name)}</div>
+          ${e.note ? `<div class="entry-note">${esc(e.note)}</div>` : ''}
+          <div class="entry-time">${fmtTime(e.start)} – ${fmtTime(e.end)}</div>
+        </div>
+        <span class="entry-dur">${fmtDur(e.end - e.start)}</span>
+        <button type="button" class="icon-btn" data-del="${esc(e.id)}" aria-label="Delete entry: ${esc(p.name)}, ${fmtTime(e.start)}">${ICON.trash}</button>
+      </li>`;
+    }).join('');
+    $('today-empty').hidden = list.length > 0;
+    renderTotals();
+  }
+
+  function renderTotals() {
+    const sum = from => state.entries.filter(e => e.start >= from).reduce((t, e) => t + e.end - e.start, 0) + runningMs();
+    $('today-total').textContent = fmtDur(sum(dayStart()));
+    $('week-total').textContent = fmtDur(sum(weekStart()));
+  }
+
+  function renderWeek() {
+    const w = weekStart(), totals = new Map();
+    const add = (id, ms) => totals.set(id, (totals.get(id) || 0) + ms);
+    state.entries.filter(e => e.start >= w).forEach(e => add(e.projectId, e.end - e.start));
+    if (state.running) add(state.running.projectId, runningMs());
+    const rows = [...totals].sort((a, b) => b[1] - a[1]), max = rows.length ? rows[0][1] : 1;
+    $('week-list').innerHTML = rows.map(([id, ms]) => {
+      const p = project(id);
+      return `<li class="week-row">
+        <div class="week-label">
+          <span class="dot" style="background:${colorVar(p)}" aria-hidden="true"></span>
+          <span class="week-name">${esc(p.name)}</span>
+          <span class="week-hours">${fmtDur(ms)}</span>
+        </div>
+        <div class="bar" aria-hidden="true"><span style="width:${Math.max(2, ms / max * 100)}%;background:${colorVar(p)}"></span></div>
+      </li>`;
+    }).join('');
+    $('week-empty').hidden = rows.length > 0;
+    renderTotals();
+  }
+
+  function renderAll() { renderProjects(); renderTimer(); renderToday(); renderWeek(); }
+
+  // ---- actions
+  function resolveProject() {
+    const sel = $('project'), err = $('new-project-error'), input = $('new-project');
+    if (sel.value !== '__new') return sel.value;
+    const name = input.value.trim();
+    if (!name) {
+      err.textContent = 'Enter a project name to start the timer.';
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+      return null;
+    }
+    let p = state.projects.find(x => x.name.toLowerCase() === name.toLowerCase());
+    if (!p) { p = { id: 'p' + Date.now(), name, color: state.projects.length }; state.projects.push(p); }
+    input.value = '';
+    return p.id; // renderProjects selects it because it becomes the running project
+  }
+
+  $('timer-form').addEventListener('submit', ev => {
+    ev.preventDefault();
+    if (state.running) {
+      const r = state.running, end = Date.now();
+      state.entries.push({ id: 'e' + end, projectId: r.projectId, note: r.note, start: r.start, end });
+      state.running = null;
+      $('note').value = '';
+      toast(`Saved ${fmtDur(end - r.start)} on ${project(r.projectId).name}.`);
+    } else {
+      const projectId = resolveProject();
+      if (!projectId) return;
+      state.running = { start: Date.now(), projectId, note: $('note').value.trim() };
+      toast(`Timer started on ${project(projectId).name}.`);
+    }
+    save(); renderAll();
+  });
+
+  $('project').addEventListener('change', ev => {
+    $('new-project-field').hidden = ev.target.value !== '__new';
+    if (ev.target.value === '__new') $('new-project').focus();
+    else if (state.running) { state.running.projectId = ev.target.value; save(); renderTimer(); renderWeek(); }
+  });
+  $('new-project').addEventListener('input', ev => {
+    $('new-project-error').textContent = '';
+    ev.target.removeAttribute('aria-invalid');
+  });
+  $('note').addEventListener('input', ev => {
+    if (state.running) { state.running.note = ev.target.value.trim(); save(); }
+  });
+
+  $('today-list').addEventListener('click', ev => {
+    const btn = ev.target.closest('[data-del]');
+    if (!btn) return;
+    const i = state.entries.findIndex(e => e.id === btn.dataset.del);
+    if (i < 0) return;
+    const [removed] = state.entries.splice(i, 1);
+    save(); renderToday(); renderWeek();
+    $('today-list').querySelector('.icon-btn')?.focus(); // focus would otherwise drop to <body>
+    toast('Entry deleted.', () => { state.entries.push(removed); save(); renderToday(); renderWeek(); });
+  });
+
+  // Keep two open tabs from overwriting each other.
+  window.addEventListener('storage', ev => { if (ev.key === KEY) { state = load(); renderAll(); } });
+
+  // ---- init
+  const w = weekStart();
+  $('today-date').textContent = fmtDay(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' });
+  $('week-range').textContent = `${fmtDay(w, { day: 'numeric', month: 'short' })} – ${fmtDay(w + 6 * 864e5, { day: 'numeric', month: 'short' })}`;
+  renderAll();
+  if (state.running) $('note').value = state.running.note;
+  setInterval(() => { if (state.running) { renderTimer(); renderWeek(); } }, 1000);
+})();
+</script>
+</body>
+</html>

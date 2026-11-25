@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tally</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F2F4EF;
+  --sheet: #FFFFFF;
+  --ink: #17213B;
+  --graphite: #5C6478;
+  --rule: #D5D9D0;
+  --p: var(--ink); /* colour of the selected / running project */
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  font-stretch: 100%;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.wrap { max-width: 70rem; margin: 0 auto; padding: 0 1.5rem; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Top line */
+.top { display: flex; justify-content: space-between; align-items: baseline; padding-block: 1.1rem; }
+.top strong { font-stretch: 75%; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.01em; }
+.top span { color: var(--graphite); }
+
+/* Timer band: the one loud thing. It floods with the project's colour while running. */
+.timer { background: var(--sheet); border-block: 1px solid var(--rule); transition: background-color .35s, color .35s; }
+.timer form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "note clock" "projects go";
+  gap: 1.25rem 3rem;
+  align-items: end;
+  padding: 2rem 0 2.25rem;
+}
+.note { grid-area: note; align-self: center; }
+.note input {
+  width: 100%;
+  border: 0; border-bottom: 2px solid var(--rule); border-radius: 0;
+  background: none;
+  padding: .4rem 0;
+  font-size: 1.5rem; font-weight: 500;
+}
+.note input::placeholder { color: var(--graphite); opacity: 1; }
+.note input:focus-visible { outline: 0; border-bottom-color: var(--ink); }
+
+.clock {
+  grid-area: clock; justify-self: end;
+  font-stretch: 62%; font-weight: 700;
+  font-size: clamp(4.5rem, 12vw, 9.5rem);
+  line-height: .82; letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.clock b { display: inline-block; width: .46em; text-align: center; font-weight: inherit; } /* fixed cells: no jitter */
+
+.projects { grid-area: projects; border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.projects label { cursor: pointer; }
+.projects span {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .45rem .8rem;
+  border: 1px solid var(--rule); border-radius: 6px;
+  font-size: .9375rem; font-weight: 500;
+}
+.projects span::before { content: ""; width: .7rem; height: .7rem; border-radius: 2px; background: var(--c); }
+.projects input:checked + span { background: var(--c); border-color: var(--c); color: #fff; }
+.projects input:checked + span::before { background: #fff; }
+.projects input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.go {
+  grid-area: go; justify-self: end;
+  min-width: 11rem;
+  border: 0; border-radius: 6px;
+  background: var(--ink); color: #fff;
+  padding: .85rem 1.5rem;
+  font-size: 1.0625rem; font-weight: 700;
+  cursor: pointer;
+}
+
+.timer.running { background: var(--p); color: #fff; border-color: var(--p); }
+.timer.running .note input { border-bottom-color: rgb(255 255 255 / .5); }
+.timer.running .note input::placeholder { color: rgb(255 255 255 / .75); }
+.timer.running .note input:focus-visible { border-bottom-color: #fff; }
+.timer.running .projects span { border-color: rgb(255 255 255 / .4); }
+.timer.running .projects span::before { display: none; }
+.timer.running .projects input:not(:checked) + span { opacity: .6; cursor: default; }
+.timer.running .projects input:checked + span { background: #fff; border-color: #fff; color: var(--ink); }
+.timer.running .go { background: #fff; color: var(--ink); }
+.timer.running :focus-visible, .timer.running .projects input:focus-visible + span { outline-color: #fff; }
+
+/* Day tape: where today's hours actually fell */
+.tape { position: relative; height: 1.5rem; margin-top: 2rem; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.tape i { position: absolute; top: 0; bottom: 0; background: var(--c); min-width: 2px; }
+.tape i.now { background: var(--ink); width: 2px; min-width: 0; }
+.hours { position: relative; height: 1.4rem; margin-top: .3rem; color: var(--graphite); font-size: .8125rem; }
+.hours span { position: absolute; transform: translateX(-50%); }
+.hours span:first-child { transform: none; }
+.hours span:last-child { transform: translateX(-100%); }
+
+/* Two lists */
+.cols { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 4rem; padding: 2rem 0 4rem; }
+h2 { margin: 0; font-stretch: 75%; font-weight: 800; font-size: 2rem; line-height: 1.1; }
+.head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: .75rem; border-bottom: 2px solid var(--ink); }
+.head output { font-weight: 700; font-size: 1.125rem; }
+ul { list-style: none; margin: 0; padding: 0; }
+
+.entries li {
+  display: grid; grid-template-columns: .7rem minmax(0, 1fr) auto auto; gap: .2rem 1rem; align-items: center;
+  padding: .85rem 0; border-bottom: 1px solid var(--rule);
+}
+.entries .sw { width: .7rem; height: .7rem; border-radius: 2px; background: var(--c); }
+.entries .what { font-weight: 600; overflow-wrap: anywhere; }
+.entries .meta { grid-column: 2; color: var(--graphite); font-size: .875rem; }
+.entries .dur { grid-row: 1; grid-column: 3; font-weight: 700; text-align: right; }
+.entries .again { grid-row: 1 / span 2; grid-column: 4; }
+.again { border: 1px solid var(--rule); border-radius: 6px; background: none; padding: .35rem .7rem; font-size: .875rem; font-weight: 500; cursor: pointer; }
+.again:hover { border-color: var(--ink); }
+.entries .live .dur { color: var(--c); grid-column: 3 / 5; }
+.empty { padding: 1.5rem 0; color: var(--graphite); max-width: 34ch; }
+
+.week li { padding: .85rem 0; border-bottom: 1px solid var(--rule); }
+.week .row { display: flex; justify-content: space-between; gap: 1rem; }
+.week .row b { font-weight: 700; white-space: nowrap; }
+.bar { height: .6rem; margin-top: .45rem; background: var(--rule); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--c); }
+
+@media (max-width: 52rem) {
+  .timer form { grid-template-columns: minmax(0, 1fr); grid-template-areas: "clock" "note" "projects" "go"; gap: 1.25rem; padding: 1.5rem 0; }
+  .clock, .go { justify-self: stretch; }
+  .cols { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .hours span:nth-child(even) { display: none; }
+  .top span { font-size: .875rem; }
+}
+@media (max-width: 26rem) {
+  .entries li { grid-template-columns: .7rem minmax(0, 1fr) auto; }
+  .entries .again { grid-row: 3; grid-column: 2; justify-self: start; margin-top: .3rem; }
+}
+@media (prefers-reduced-motion: reduce) { .timer { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="wrap top">
+  <strong>Tally</strong>
+  <span id="date"></span>
+</header>
+
+<main>
+  <section class="timer" id="timer" aria-label="Timer">
+    <div class="wrap">
+      <form id="form">
+        <label class="note">
+          <span class="sr">What are you working on?</span>
+          <input id="note" type="text" placeholder="What are you working on?" autocomplete="off" maxlength="120">
+        </label>
+        <div class="clock" id="clock" role="timer" aria-label="Elapsed time"></div>
+        <fieldset class="projects" id="projects"><legend class="sr">Project</legend></fieldset>
+        <button class="go" id="go" type="submit">Start timer</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="tape" id="tape" role="img" aria-label="Timeline of today's tracked time"></div>
+    <div class="hours" id="hours" aria-hidden="true"></div>
+
+    <div class="cols">
+      <section aria-labelledby="h-today">
+        <div class="head"><h2 id="h-today">Today</h2><output id="today-total"></output></div>
+        <ul class="entries" id="entries"></ul>
+      </section>
+      <section aria-labelledby="h-week">
+        <div class="head"><h2 id="h-week">This week</h2><output id="week-total"></output></div>
+        <ul class="week" id="week"></ul>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+const PROJECTS = [
+  { id: 'atlas',   name: 'Atlas Coffee webshop',    color: '#2A46C9' },
+  { id: 'nordlys', name: 'Nordlys rebrand',         color: '#C63A22' },
+  { id: 'hale',    name: 'Hale & Finch newsletter', color: '#2F6B3F' },
+  { id: 'kiln',    name: 'Kiln app',                color: '#74398A' },
+  { id: 'admin',   name: 'Admin and invoicing',     color: '#8F5B00' },
+];
+const KEY = 'tally-v1', HOUR = 36e5;
+const $ = id => document.getElementById(id);
+const project = id => PROJECTS.find(p => p.id === id) || PROJECTS[0];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+
+const startOfDay = () => new Date().setHours(0, 0, 0, 0);
+const startOfWeek = () => { const d = new Date(startOfDay()); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d.getTime(); }; // Monday
+
+const fmtClock = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 3600)}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
+const fmtDur = ms => { const m = Math.floor(ms / 6e4), h = Math.floor(m / 60); return h ? `${h}h ${pad(m % 60)}m` : `${m}m`; };
+const fmtTime = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+console.assert(fmtClock(3723000) === '1:02:03' && fmtDur(3723000) === '1h 02m' && fmtDur(59000) === '0m', 'format self-check');
+
+// Sample week so the first open is not an empty screen. Only entries that have already ended are created.
+function seed() {
+  const days = [
+    [[0, 'Product page templates', '09:05', '11:40'], [4, 'Quarterly VAT return', '11:50', '12:30'], [1, 'Moodboard round two', '13:35', '16:10']],
+    [[2, 'November issue draft', '08:40', '10:15'], [0, 'Cart and shipping rules', '10:30', '12:45'], [3, 'Onboarding screens', '14:00', '17:20']],
+    [[0, 'Checkout page layout', '08:48', '10:20'], [4, 'Invoice for October', '10:35', '11:10'], [1, 'Logo refinements', '11:15', '12:40'], [0, 'Product photo retouching', '13:30', '15:05']],
+    [[3, 'Settings and account flow', '09:10', '12:05'], [1, 'Brand guidelines PDF', '13:15', '15:45']],
+    [[2, 'Subscriber survey write-up', '09:00', '10:30'], [3, 'Bug fixes from review', '10:45', '12:50'], [4, 'Chasing late payments', '14:00', '14:35']],
+  ];
+  const out = [], now = Date.now();
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(startOfWeek()); day.setDate(day.getDate() + i);
+    for (const [p, note, a, b] of days[i % days.length]) {
+      const at = t => new Date(day).setHours(...t.split(':'), 0, 0);
+      if (at(b) <= now) out.push({ project: PROJECTS[p].id, note, start: at(a), end: at(b) });
+    }
+  }
+  return out;
+}
+
+let state;
+try { state = JSON.parse(localStorage.getItem(KEY)); } catch {}
+if (!state || !Array.isArray(state.entries)) state = { entries: seed(), running: null };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }; // private mode: works for the session only
+
+// shortcut: an entry counts for the day it started on; split at midnight if people track overnight.
+const withRunning = () => state.running ? [...state.entries, { ...state.running, end: Date.now(), live: true }] : state.entries;
+const since = t => withRunning().filter(e => e.start >= t);
+const total = list => list.reduce((s, e) => s + e.end - e.start, 0);
+
+function renderForm() {
+  const r = state.running, p = project(r ? r.project : document.querySelector('#projects input:checked').value);
+  $('timer').classList.toggle('running', !!r);
+  $('timer').style.setProperty('--p', p.color);
+  $('go').textContent = r ? 'Stop timer' : 'Start timer';
+  for (const i of document.querySelectorAll('#projects input')) { i.disabled = !!r && i.value !== p.id; i.checked = i.value === p.id; }
+}
+
+function renderClock() {
+  const r = state.running, t = fmtClock(r ? Date.now() - r.start : 0);
+  $('clock').innerHTML = [...t].map(c => c === ':' ? ':' : `<b>${c}</b>`).join('');
+  document.title = r ? `${t} ${project(r.project).name}` : 'Tally';
+}
+
+function renderToday() {
+  const list = since(startOfDay()).sort((a, b) => b.start - a.start);
+  $('entries').innerHTML = list.length ? list.map(e => {
+    const p = project(e.project);
+    return `<li style="--c:${p.color}"${e.live ? ' class="live"' : ''}>
+      <span class="sw"></span>
+      <span class="what">${esc(e.note || 'No description')}</span>
+      <span class="meta">${esc(p.name)}, ${fmtTime(e.start)} to ${e.live ? 'now' : fmtTime(e.end)}</span>
+      <span class="dur"${e.live ? ' id="live-dur"' : ''}>${fmtDur(e.end - e.start)}</span>
+      ${e.live ? '' : `<button class="again" type="button" data-p="${p.id}" data-n="${esc(e.note)}">Start again</button>`}
+    </li>`;
+  }).join('') : '<li class="empty">Nothing tracked today. Pick a project above and start the timer.</li>';
+}
+
+// Everything that moves while the timer runs and holds no focusable controls.
+function renderLive() {
+  const day = startOfDay(), now = Date.now(), today = since(day);
+  $('today-total').textContent = fmtDur(total(today));
+  if ($('live-dur') && state.running) $('live-dur').textContent = fmtDur(now - state.running.start);
+
+  const from = Math.min(8, ...today.map(e => new Date(e.start).getHours()));
+  const to = Math.min(24, Math.max(18, new Date(now).getHours() + 2));
+  const pos = ts => Math.max(0, Math.min(100, (ts - day - from * HOUR) / ((to - from) * HOUR) * 100));
+  $('tape').innerHTML = today.map(e => `<i style="--c:${project(e.project).color};left:${pos(e.start)}%;width:${pos(e.end) - pos(e.start)}%"></i>`).join('')
+    + `<i class="now" style="left:${pos(now)}%"></i>`;
+  $('hours').innerHTML = Array.from({ length: to - from + 1 }, (_, i) => `<span style="left:${i / (to - from) * 100}%">${pad((from + i) % 24)}:00</span>`).join('');
+
+  const week = since(startOfWeek());
+  const per = PROJECTS.map(p => ({ p, ms: total(week.filter(e => e.project === p.id)) }));
+  const max = Math.max(1, ...per.map(x => x.ms));
+  $('week-total').textContent = fmtDur(total(week));
+  $('week').innerHTML = per.map(({ p, ms }) => `<li style="--c:${p.color}">
+    <div class="row"><span>${esc(p.name)}</span><b>${fmtDur(ms)}</b></div>
+    <div class="bar"><i style="width:${ms / max * 100}%"></i></div></li>`).join('');
+}
+
+function render() { renderForm(); renderClock(); renderToday(); renderLive(); }
+
+function stop() {
+  if (!state.running) return;
+  state.entries.push({ ...state.running, end: Date.now() });
+  state.running = null;
+  $('note').value = '';
+}
+function start(projectId, note) {
+  stop();
+  state.running = { project: projectId, note: note.trim(), start: Date.now() };
+  $('note').value = state.running.note;
+}
+
+$('projects').insertAdjacentHTML('beforeend', PROJECTS.map((p, i) =>
+  `<label><input class="sr" type="radio" name="project" value="${p.id}"${i ? '' : ' checked'}><span style="--c:${p.color}">${esc(p.name)}</span></label>`).join(''));
+if (state.running) $('note').value = state.running.note;
+$('date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+$('form').addEventListener('submit', e => {
+  e.preventDefault();
+  state.running ? stop() : start(document.querySelector('#projects input:checked').value, $('note').value);
+  save(); render();
+});
+$('projects').addEventListener('change', renderForm);
+$('note').addEventListener('input', () => { if (state.running) { state.running.note = $('note').value.trim(); save(); renderToday(); } });
+$('entries').addEventListener('click', e => {
+  const b = e.target.closest('.again'); if (!b) return;
+  start(b.dataset.p, b.dataset.n); save(); render(); $('go').focus();
+});
+
+render();
+setInterval(() => { renderClock(); renderLive(); }, 1000);
+</script>
+</body>
+</html>

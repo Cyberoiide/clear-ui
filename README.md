@@ -92,6 +92,16 @@ skills/clear-ui/
 - A 4px spacing grid; Inter or the system font at 14px.
 - Hover appears at once and fades over 150ms; nothing animates on load or scroll.
 
+## Benchmark
+
+One prompt was given to three agents, each following a different skill (`frontend-design`,
+`ui-ux-pro-max`, `clear-ui`). First replies, screenshots and counts are in
+[benchmark/](benchmark/README.md).
+
+| `frontend-design` | `ui-ux-pro-max` | `clear-ui` |
+|---|---|---|
+| ![](benchmark/shots/frontend-design-final.png) | ![](benchmark/shots/ui-ux-pro-max-final.png) | ![](benchmark/shots/clear-ui-final.png) |
+
 ## Where it comes from
 
 The rules were derived in November 2026 from the public pages, shipped CSS, documentation and
