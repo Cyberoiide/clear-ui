@@ -299,6 +299,8 @@ already know how they work.
   or side panel (keeps the list in view) or as a full page (more room), with next and previous
   available inside the detail. Choose one and use it everywhere.
 - **Selection bar:** selecting rows raises one floating bar with the actions for the selection.
+- **Context menu:** act on a row, card or selection in place. Group common actions first, offer
+  a visible entry point, and keep the action target clear. See [Context menus](context-menus.md).
 - **Command menu:** one search box that reaches every screen and action, opened by one shortcut,
   aware of what is under the cursor.
 - **Conversation:** one centred column of about 720 to 768px, the input fixed at the bottom and
