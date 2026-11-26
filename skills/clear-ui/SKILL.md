@@ -6,7 +6,7 @@ description: >-
   the user's choice, then build the UI with a fixed token system (ink on white, hairline borders,
   one filled button per screen, colour only for status and chart categories). Use this whenever the user asks to design,
   build, redesign, restyle or review any interface: a web app, dashboard, admin panel, landing page,
-  form, settings page, onboarding flow, chat interface, mobile screen or single component. Also use
+  form, settings page, onboarding flow, chat interface, mobile screen, context menu or single component. Also use
   it when they say "clean", "simple", "minimal", "like Linear", "black and white", "not AI slop",
   "make this look better" or "the user gets lost", and when a frontend task has no stated visual
   direction.
@@ -66,6 +66,9 @@ how the four reference products behave. The ones that shape structure most:
 Skip Part 1 only when the user asks to go straight to the UI, or when the task changes the look of
 an existing screen without changing its structure. Say that you are skipping it.
 
+For right-click or row action menus, read [Context menus](references/context-menus.md). Decide
+what the menu acts on, how users open it, and which actions need a submenu before styling it.
+
 ## Part 2: UI
 
 Read `references/ui.md` before writing code. It holds every value: colour, type, spacing, radius,
@@ -120,6 +123,7 @@ unverified.
 |---|---|
 | `references/ux.md` | Starting any task: the UX method, wireframe rules, the rules that keep users oriented, common patterns |
 | `references/ui.md` | Building or reviewing the UI: all tokens and component specifications |
+| `references/context-menus.md` | Designing, implementing or reviewing right-click, row action or cascading menus |
 | `references/sources.md` | The user asks why a rule exists, or a rule needs adapting: what each product contributed to the UX and to the UI |
 | `references/research/ux/*.md` | A detail of how Linear, ChatGPT, Mistral or Alan structure a flow or word a state is needed |
 | `references/research/ui/*.md` | A visual detail from one of them is needed that the summary lacks |
