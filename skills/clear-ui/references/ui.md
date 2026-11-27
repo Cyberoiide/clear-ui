@@ -100,7 +100,12 @@ a timeline, use the five tints, in this order:
 - Text on a tint is `--text`. The tints are too pale to be read on their own, so every mark carries
   its name and value in text, and adjacent marks are separated by a 2px gap.
 - More than five categories: keep the four largest and group the rest as "Other" in
-  `--data-neutral`.
+  `--data-neutral`. Rank them over the whole chart, not the selected period, so a category
+  keeps its tint when the period changes. When the user must also find every category by name,
+  such as accounts or environments they filter by, add a bar list of all of them beside the
+  chart, sorted by size: each bar takes its category's tint, and the folded ones are neutral.
+- Stacked by category, the selected period can no longer be the ink mark. Mark it with a
+  `--bg-soft` band behind its column and its axis label and total in `--text` at weight 600.
 - Tints fill chart marks and swatches only. Not cards, badges, navigation, icons or buttons.
 - Do not use a status colour as a category: a red bar reads as a problem.
 
@@ -325,6 +330,20 @@ library only when the chart needs zoom, many series or live data.
 - **Columns:** bars from a zero baseline, 4px radius on the top corners, at most about 31 of them,
   the current one in ink.
 - **Line:** 1.5px in ink, no dots except on the last point and the hovered one.
+
+**Chart drawn with a library.** When the project already uses one (Chart.js, Recharts, ECharts),
+configure it to these rules instead of keeping its defaults:
+
+- Canvas charts cannot read `var(--…)`. Read each token with `getComputedStyle` when the chart is
+  drawn, and redraw when `prefers-color-scheme` changes, or dark mode keeps the light colours.
+- Turn off the entry animation: libraries animate on load by default, and nothing animates on load.
+- The library tooltip becomes the tooltip component: ink background, 12px text, 6px radius, no
+  colour boxes for a single series.
+- No legend for a single series; dashed `--border` gridlines, at most four ticks, no axis line
+  except the baseline.
+- Value labels on the marks need a small draw hook (a Chart.js plugin, a Recharts `LabelList`).
+  Skipping them because the library does not draw them by default breaks "every mark has its
+  name and value in text".
 
 **Tabs.** 40 high, 14px, weight 500, 20px apart, on a hairline. The selected tab is `--text` with a
 2px ink underline.
