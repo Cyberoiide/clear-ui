@@ -100,9 +100,12 @@ a timeline, use the five tints, in this order:
 - Text on a tint is `--text`. The tints are too pale to be read on their own, so every mark carries
   its name and value in text, and adjacent marks are separated by a 2px gap.
 - More than five categories: keep the four largest and group the rest as "Other" in
-  `--data-neutral`. When the user must find every category by name, such as accounts or
-  environments they filter by, do not fold them: draw the total in `--data-neutral` with the
-  selected period in ink, and list every category in a bar list beside it, sorted by size.
+  `--data-neutral`. Rank them over the whole chart, not the selected period, so a category
+  keeps its tint when the period changes. When the user must also find every category by name,
+  such as accounts or environments they filter by, add a bar list of all of them beside the
+  chart, sorted by size: each bar takes its category's tint, and the folded ones are neutral.
+- Stacked by category, the selected period can no longer be the ink mark. Mark it with a
+  `--bg-soft` band behind its column and its axis label and total in `--text` at weight 600.
 - Tints fill chart marks and swatches only. Not cards, badges, navigation, icons or buttons.
 - Do not use a status colour as a category: a red bar reads as a problem.
 
