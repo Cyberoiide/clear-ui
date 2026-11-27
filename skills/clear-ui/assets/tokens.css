@@ -194,6 +194,7 @@ a:hover { text-decoration-color: currentColor; }
 .label { font-size: var(--text-sm); line-height: var(--lh-sm); font-weight: var(--weight-medium); }
 .hint { font-size: var(--text-sm); line-height: var(--lh-sm); color: var(--text-2); }
 .hint.error { color: var(--danger); }
+/* .select styles a button that opens a .menu picker, not a native <select>: the browser draws that list. */
 .input, .select, .textarea {
   width: 100%; height: 40px; padding: 0 12px;
   border: 1px solid var(--border-strong); border-radius: var(--radius-xl);
@@ -201,6 +202,8 @@ a:hover { text-decoration-color: currentColor; }
   font: var(--weight-regular) var(--text-base)/var(--lh-base) var(--font-sans);
   transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
+.select { padding-right: 32px; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  background: var(--bg-raised) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e6e6e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; }
 .textarea { height: auto; min-height: 96px; padding: 10px 12px; resize: vertical; }
 .input-sm { height: 32px; border-radius: var(--radius-lg); }
 .input-lg { height: 48px; padding: 0 16px; border-radius: var(--radius-2xl); font-size: var(--text-md); }
@@ -231,9 +234,12 @@ a:hover { text-decoration-color: currentColor; }
 
 /* Floating surfaces get the shadow and no border. */
 .menu { min-width: 200px; padding: 4px; background: var(--bg-raised); border-radius: var(--radius-xl); box-shadow: var(--shadow-float); }
-.menu-item { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; border-radius: var(--radius-md); color: var(--text); cursor: pointer; }
+.menu-item { display: flex; align-items: center; gap: 8px; width: 100%; height: 32px; padding: 0 8px; border: 0; border-radius: var(--radius-md); background: none; color: var(--text); font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
 .menu-item:hover, .menu-item[data-active] { background: var(--bg-soft); }
 .menu-item .kbd { margin-left: auto; }
+/* Picker: a menu of choices. The current one is aria-checked and shows the tick. */
+.menu-item .tick { margin-left: auto; width: 16px; height: 16px; flex: none; visibility: hidden; }
+.menu-item[aria-checked="true"] .tick { visibility: visible; }
 .menu-sep { height: 1px; margin: 4px -4px; background: var(--border); }
 .dialog { width: min(480px, calc(100vw - 32px)); padding: var(--space-6); background: var(--bg-raised); border-radius: var(--radius-3xl); box-shadow: var(--shadow-dialog); }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: var(--space-6); }
