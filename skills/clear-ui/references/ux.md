@@ -258,6 +258,11 @@ it. [Benchmark run of this skill; reference dashboards supplied by the author, s
   by side share a unit.
 - **Mark the present:** a "now" line on a timeline, the current period on a time series.
 - **An empty chart still shows its axis,** with one sentence saying what will appear on it.
+- **Say when a period is still open.** The current month or today is incomplete and its figures
+  may still change. Name it "so far", compare it with the last closed period and not with a partial
+  one, stop a daily trend at yesterday so today's half-loaded value does not read as a drop, and
+  mark each total as final or estimated. [A FinOps cost dashboard, first version: today's partial
+  day plotted as a drop to near zero, and a month-to-date total set beside a full previous month]
 
 ### Words
 
