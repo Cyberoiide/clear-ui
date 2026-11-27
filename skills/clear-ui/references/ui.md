@@ -271,8 +271,11 @@ horizontal padding, 14px text, `--border-strong`. Use 32 (`input-sm`) in toolbar
 **Checkbox** 16px, 4px radius, ink when checked. **Switch** 32×20, ink when on; use it for settings
 that apply immediately, and a checkbox for choices submitted with a form. **Segmented control** for
 two to four mutually exclusive views: a soft track with the selected segment raised in white.
-**Select** looks like the input with a chevron; with more than about eight options use a searchable
-menu.
+**Select** is a button that looks like the input (or a ghost button, in a toolbar) with a chevron,
+and opens the product's own menu (section 9) with a tick on the current choice. Do not use a native
+`<select>`: styling reaches only its closed state, and the browser draws its open list in system
+grey with square corners, next to menus that follow these rules. With more than about eight options,
+add a search field at the top of the same menu.
 
 Forms are one column, at most 640 wide, labels above fields. Mark optional fields, not required
 ones. Validate when the user leaves a field, not on every keystroke.
@@ -330,6 +333,12 @@ library only when the chart needs zoom, many series or live data.
 radius, 8px padding, soft fill on hover. Shortcuts sit at the right in key caps. Destructive items
 are red and last, after a separator.
 
+**Picker menu.** A menu whose items are choices, not commands: each item is
+`role="menuitemradio"` with `aria-checked`, and the current one shows a 16px tick at the right. The
+button names the current choice ("Any team", "Core"). Open it below the button, or above when the
+button sits in the lower half of the viewport (a composer pinned to the bottom of a phone screen);
+limit its height to the space on that side and let it scroll.
+
 **Dialog.** Up to 480 wide, 20px radius, 24px padding, `--shadow-dialog`, over a backdrop of black
 at 40%. A title that names the decision, one or two sentences, and buttons at the bottom right.
 Use dialogs for decisions that must interrupt; use a side panel or a page for editing.
@@ -353,6 +362,31 @@ the right.
 
 **Loading.** Skeleton blocks in `--bg-soft` that match the final layout, or a 16px spinner inside the
 control that triggered the wait. No full-page spinners after the first load.
+
+### One component per job
+
+Each job has one component, and every screen that needs the job uses it: one menu, one popover
+position and flip, one dialog, one toast, one tick for "current choice". A product where the
+workspace switcher opens a rounded menu and the team filter opens the browser's grey list looks
+assembled from parts, even if each part follows the tokens.
+
+Before building a control:
+
+1. Search the code for one that does the job (`menu`, `popover`, `role="menu"`, `dialog`, the
+   reference classes in `tokens.css`).
+2. If it exists, use it. If its name ties it to its first use, rename it to a general name and keep
+   one copy. Its positioning, keyboard handling and "pause background redraws while open" logic come
+   along for free.
+3. If it does not exist, build it once from `.menu` / `.dialog` in `tokens.css`, with a general name,
+   so the next control can reuse it.
+
+**Example: Docket's Home pickers.** The sidebar's workspace switcher was a popover menu (`.ws-menu`,
+`positionWorkspaceMenu()`). The Team and Project pickers under the Home box were built later as
+native `<select>`s styled to match. Closed, they looked right; open, they showed the operating
+system's list. The fix deleted the second primitive instead of styling it harder: `.ws-menu` became
+`.pop-menu`, `positionWorkspaceMenu()` became `positionMenu(menu)` (which also learned to open
+upward on the phone), and both pickers became a button plus the same menu with `menuitemradio`
+items. One menu now serves the switcher and both pickers, and the next picker costs one function call.
 
 ## 10. Motion
 
@@ -451,5 +485,7 @@ Look at a screenshot of the result, at desktop and phone width, in light and dar
 10. Do empty, loading and error states exist and say what to do next?
 11. Where the data has a shape (time, amounts, stages), is it drawn, and does every mark have its
     name and value in text?
-12. Is every item in section 14 absent?
-13. Then remove one more thing.
+12. Open every dropdown, picker and menu. Do they all use the same menu component, with the same
+    radius, shadow, item height and tick? Is any of them the browser's native list?
+13. Is every item in section 14 absent?
+14. Then remove one more thing.

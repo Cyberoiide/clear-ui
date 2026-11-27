@@ -93,6 +93,9 @@ look generated. The rules that shape everything else:
   tracking that tightens only on large sizes.
 - **Motion answers the user.** Hover appears at once and fades over 150ms; nothing animates on load
   or scroll.
+- **One component per job, reused everywhere.** Every dropdown, picker, switcher and row menu opens
+  the same menu; every floating surface uses the same popover. A second look for the same job is a
+  bug, even when each one looks fine alone.
 
 Start from the bundled files instead of rewriting them:
 
@@ -105,6 +108,13 @@ Start from the bundled files instead of rewriting them:
 
 In a project that already has a design system, keep its components and apply these rules through
 its tokens.
+
+**Reuse before you build.** Before writing any control, search the project for one that already does
+the job: grep for `menu`, `popover`, `role="menu"`, `dialog`, the class names in `tokens.css`. If
+one exists, use it. If it carries a one-use name (`.ws-menu`, `positionWorkspaceMenu`), rename it to
+a general one and use it in both places; do not copy it, and do not reach for a different primitive
+such as a native `<select>`. Judge the open state too: a styled `<select>` looks right closed, but
+the browser draws its open list. See `references/ui.md` section 9, "One component per job".
 
 Write the interface's words with the same care as its layout: name things as the user would, make
 button labels say what happens, keep one name per thing through a flow, and make errors and empty
