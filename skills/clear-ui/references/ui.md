@@ -467,8 +467,6 @@ reference products do them. Leave them out unless the user asks for one by name.
 - Monospace type for labels or numbers as decoration.
 - Vague copy: "Unlock the power of", "Seamless", "Supercharge", "Get started today".
 - Placeholder content: "Lorem ipsum", "John Doe", "Acme" where the real subject is known.
-- A native `<select>` or date input whose open list the browser draws, beside the product's own menus.
-- Two components that do the same job with different looks: two menus, two popovers, two toasts.
 
 ## 15. Check before shipping
 
